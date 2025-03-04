@@ -1,3 +1,13 @@
 node_modules/
 .env
 *.log
+# Игнорировать папку .vs
+.vs/
+
+# Игнорировать node_modules и .env
+node_modules/
+.env
+
+# Игнорировать логи и временные файлы
+*.log
+*.tmp
