@@ -1,0 +1,274 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a, #2c0b0b);
+}
+
+/* Стили для шапки */
+.header {
+  background: #2c0b0b;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff; /* Светлый шрифт */
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.logo i {
+  font-size: 1.8rem; /* Размер иконки щита */
+  color: #ffffff; /* Светлый цвет иконки */
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav a {
+  color: #ffffff; /* Светлый шрифт */
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.3s ease;
+}
+
+.nav a:hover {
+  color: #e0e0e0; /* Чуть темнее белого при наведении */
+}
+
+.nav a i {
+  font-size: 1.2rem;
+  color: #ffffff; /* Светлая иконка */
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.auth-buttons .sign-in {
+  background: #ffffff;
+  color: #2c0b0b;
+  padding: 5px 15px;
+  border-radius: 5px;
+  font-weight: 500;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.auth-buttons .sign-in:hover {
+  background: #ff0000;
+  color: #ffffff;
+}
+
+.auth-buttons .register {
+  background: transparent;
+  color: #ffffff; /* Светлый шрифт */
+  padding: 5px 15px;
+  border: 1px solid #ffffff;
+  border-radius: 5px;
+  font-weight: 500;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.auth-buttons .register:hover {
+  background: #ffffff;
+  color: #2c0b0b;
+}
+
+/* Стили для основного контента */
+.main {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Стили для заголовка */
+.hero {
+  background: linear-gradient(90deg, #2c0b0b, #ff0000);
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ffffff; /* Светлый шрифт */
+  text-transform: uppercase;
+}
+
+/* Стили для боковой панели */
+.sidebar {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.sidebar a {
+  color: #ffffff; /* Светлый шрифт */
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.3s ease;
+}
+
+.sidebar a:hover {
+  color: #e0e0e0; /* Чуть темнее белого при наведении */
+}
+
+.sidebar a i {
+  font-size: 1.2rem;
+  color: #ffffff; /* Светлая иконка */
+}
+
+/* Стили для поисковой строки */
+.search {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 500px;
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 10px 15px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  color: #333333;
+}
+
+.search-bar button {
+  background: #ff0000;
+  color: #ffffff; /* Светлый шрифт */
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.search-bar button:hover {
+  background: #cc0000;
+}
+
+.search-bar button i {
+  font-size: 1.2rem;
+}
+
+/* Стили для списка товаров */
+.items-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.item-card {
+  background: #2a2a2a;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.item-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+}
+
+.item-image {
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+  background: #1a1a1a;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.item-card h3 {
+  font-size: 1.1rem;
+  color: #ffffff; /* Светлый шрифт */
+  margin-bottom: 5px;
+}
+
+.item-card .price {
+  font-size: 1rem;
+  color: #ffffff; /* Светлый шрифт */
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.add-to-cart {
+  background: #ff0000;
+  color: #ffffff; /* Светлый шрифт */
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0 auto;
+  transition: background 0.3s ease;
+}
+
+.add-to-cart:hover {
+  background: #cc0000;
+}
+
+.add-to-cart i {
+  font-size: 1.1rem;
+}
+
+.no-items {
+  text-align: center;
+  color: #ffffff; /* Светлый шрифт */
+  font-size: 1.2rem;
+  padding: 20px;
+}
+
+/* Стили для футера */
+.footer {
+  background: #2c0b0b;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.footer p {
+  color: #ffffff; /* Светлый шрифт */
+  font-size: 0.9rem;
+}
