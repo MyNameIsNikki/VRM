@@ -6,6 +6,14 @@ import './App.css';
 function App() {
   const [items, setItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loginMessage, setLoginMessage] = useState('');
+  const [registerMessage, setRegisterMessage] = useState('');
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -27,6 +35,38 @@ function App() {
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (username === 'user' && password === 'pass') {
+      setIsLoggedIn(true);
+      setLoginMessage('Успешный вход!');
+      setShowLogin(false);
+    } else {
+      setLoginMessage('Неверное имя пользователя или пароль.');
+    }
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setLoginMessage('');
+    setUsername('');
+    setPassword('');
+  };
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+    // Простая проверка на заполнение полей и уникальность (временная реализация)
+    if (username && email && password) {
+      setRegisterMessage('Регистрация успешна! Вы можете войти.');
+      setShowRegister(false);
+      setUsername('');
+      setEmail('');
+      setPassword('');
+    } else {
+      setRegisterMessage('Заполните все поля.');
+    }
+  };
+
   return (
     <div className="app">
       <header className="header">
@@ -40,11 +80,73 @@ function App() {
           <Link to="/faq"><i className="fas fa-question-circle"></i> FAQ</Link>
           <Link to="/cart"><i className="fas fa-shopping-cart"></i> Корзина</Link>
           <div className="auth-buttons">
-            <Link to="/login" className="sign-in">Войти</Link>
-            <Link to="/register" className="register">Регистрация</Link>
+            {isLoggedIn ? (
+              <button onClick={handleLogout} className="logout">Выйти</button>
+            ) : (
+              <>
+                <button onClick={() => setShowLogin(true)} className="sign-in">Войти</button>
+                <button onClick={() => setShowRegister(true)} className="register">Регистрация</button>
+              </>
+            )}
           </div>
         </nav>
       </header>
+
+      {showLogin && (
+        <div className="login-modal">
+          <div className="login-content">
+            <h2>Войти</h2>
+            <form onSubmit={handleLogin}>
+              <input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button type="submit">Войти</button>
+              <button type="button" onClick={() => setShowLogin(false)}>Закрыть</button>
+            </form>
+            {loginMessage && <p>{loginMessage}</p>}
+          </div>
+        </div>
+      )}
+
+      {showRegister && (
+        <div className="login-modal">
+          <div className="login-content">
+            <h2>Регистрация</h2>
+            <form onSubmit={handleRegister}>
+              <input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button type="submit">Зарегистрироваться</button>
+              <button type="button" onClick={() => setShowRegister(false)}>Закрыть</button>
+            </form>
+            {registerMessage && <p>{registerMessage}</p>}
+          </div>
+        </div>
+      )}
 
       <main className="main">
         <section className="hero">
