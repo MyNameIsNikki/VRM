@@ -35,7 +35,8 @@
   gap: 20px;
 }
 
-.nav a {
+.nav a,
+.nav .nav-link {
   color: #ffffff;
   text-decoration: none;
   font-size: 1rem;
@@ -44,13 +45,18 @@
   align-items: center;
   gap: 5px;
   transition: color 0.3s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.nav a:hover {
+.nav a:hover,
+.nav .nav-link:hover {
   color: #e0e0e0;
 }
 
-.nav a i {
+.nav a i,
+.nav .nav-link i {
   font-size: 1.2rem;
   color: #ffffff;
 }
@@ -147,7 +153,15 @@
 
 .login-content p {
   margin-top: 10px;
-  color: #ffffff;
+  font-size: 0.9rem;
+}
+
+.login-content p.error {
+  color: #ff5555;
+}
+
+.login-content p.success {
+  color: #55ff55;
 }
 
 /* Стили для основного контента */
@@ -184,7 +198,8 @@
   border-radius: 8px;
 }
 
-.sidebar a {
+.sidebar a,
+.sidebar .nav-link {
   color: #ffffff;
   text-decoration: none;
   font-size: 1rem;
@@ -193,13 +208,18 @@
   align-items: center;
   gap: 5px;
   transition: color 0.3s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.sidebar a:hover {
+.sidebar a:hover,
+.sidebar .nav-link:hover {
   color: #e0e0e0;
 }
 
-.sidebar a i {
+.sidebar a i,
+.sidebar .nav-link i {
   font-size: 1.2rem;
   color: #ffffff;
 }
@@ -319,6 +339,492 @@
   color: #ffffff;
   font-size: 1.2rem;
   padding: 20px;
+}
+
+/* Стили для страницы профиля */
+.profile {
+  padding: 20px;
+  background: #2a2a2a;
+  border-radius: 8px;
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.profile h1 {
+  font-size: 2rem;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profile-info {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.profile-info h2 {
+  font-size: 1.5rem;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.profile-info p {
+  font-size: 1rem;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.edit-profile-button {
+  background: #ff0000;
+  color: #ffffff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.edit-profile-button:hover {
+  background: #cc0000;
+}
+
+.edit-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.edit-profile-form input {
+  padding: 8px;
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+  background: #1a1a1a;
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.edit-profile-form button {
+  background: #ff0000;
+  color: #ffffff;
+  border: none;
+  padding: 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.edit-profile-form button:hover {
+  background: #cc0000;
+}
+
+.profile-info p.success {
+  color: #55ff55;
+}
+
+.profile-info p.error {
+  color: #ff5555;
+}
+
+.user-items {
+  margin-top: 20px;
+}
+
+.user-items h2 {
+  font-size: 1.5rem;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.user-items p {
+  text-align: center;
+  color: #ffffff;
+  font-size: 1.2rem;
+}
+
+/* Стили для раздела FAQ */
+.faq {
+  padding: 20px;
+  background: #2a2a2a;
+  border-radius: 8px;
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.faq h1 {
+  font-size: 2rem;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.faq-item {
+  margin-bottom: 20px;
+}
+
+.faq-item h3 {
+  font-size: 1.2rem;
+  color: #ff0000;
+  margin-bottom: 5px;
+}
+
+.faq-item p {
+  font-size: 1rem;
+  color: #ffffff;
+  line-height: 1.5;
+}
+
+/* Стили для раздела Корзины */
+.cart {
+  padding: 20px;
+  background: #2a2a2a;
+  border-radius: 8px;
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.cart h1 {
+  font-size: 2rem;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: #1a1a1a;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.cart-item-image {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  background: #2a2a2a;
+  border-radius: 5px;
+}
+
+.cart-item-details {
+  flex: 1;
+}
+
+.cart-item-details h3 {
+  font-size: 1.1rem;
+  color: #ffffff;
+  margin-bottom: 5px;
+}
+
+.cart-item-details .price {
+  font-size: 1rem;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.remove-from-cart {
+  background: #ff0000;
+  color: #ffffff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.3s ease;
+}
+
+.remove-from-cart:hover {
+  background: #cc0000;
+}
+
+.remove-from-cart i {
+  font-size: 1.1rem;
+}
+
+.cart-total {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.cart-total h3 {
+  font-size: 1.2rem;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.checkout-button {
+  background: #ff0000;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.checkout-button:hover {
+  background: #cc0000;
+}
+
+.empty-cart {
+  text-align: center;
+  color: #ffffff;
+  font-size: 1.2rem;
+  padding: 20px;
+}
+
+/* Стили для раздела Продать скидки */
+.sell-discounts {
+  padding: 20px;
+  background: #2a2a2a;
+  border-radius: 8px;
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.sell-discounts h1 {
+  font-size: 2rem;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.sell-discounts p {
+  font-size: 1rem;
+  color: #ffffff;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.sell-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.sell-form input,
+.sell-form textarea {
+  padding: 10px;
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+  background: #1a1a1a;
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.sell-form textarea {
+  height: 100px;
+  resize: none;
+}
+
+.sell-form button {
+  background: #ff0000;
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.sell-form button:hover {
+  background: #cc0000;
+}
+
+/* Стили для раздела Купить скидки */
+.buy-discounts {
+  padding: 20px;
+  background: #2a2a2a;
+  border-radius: 8px;
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.buy-discounts h1 {
+  font-size: 2rem;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.buy-discounts p {
+  font-size: 1rem;
+  color: #ffffff;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.discount-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.discount-item {
+  background: #1a1a1a;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.discount-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+}
+
+.discount-item-image {
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+  background: #2a2a2a;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.discount-item h3 {
+  font-size: 1.1rem;
+  color: #ffffff;
+  margin-bottom: 5px;
+}
+
+.discount-item .price {
+  font-size: 1rem;
+  color: #ffffff;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+/* Стили для раздела ЧТО ВЫ ПОЛУЧАЕТЕ? */
+.benefits {
+  padding: 20px;
+  background: #2a2a2a;
+  border-radius: 8px;
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.benefits h1 {
+  font-size: 2rem;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.benefits p {
+  font-size: 1rem;
+  color: #ffffff;
+  margin-bottom: 15px;
+}
+
+.benefits ul {
+  list-style: none;
+  padding: 0;
+}
+
+.benefits li {
+  font-size: 1rem;
+  color: #ffffff;
+  margin-bottom: 10px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.benefits li:before {
+  content: "✔";
+  position: absolute;
+  left: 0;
+  color: #ff0000;
+}
+
+/* Стили для раздела НАДЁЖНОСТЬ */
+.reliability {
+  padding: 20px;
+  background: #2a2a2a;
+  border-radius: 8px;
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.reliability h1 {
+  font-size: 2rem;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.reliability p {
+  font-size: 1rem;
+  color: #ffffff;
+  margin-bottom: 15px;
+}
+
+/* Стили для раздела БЕЗОПАСНОСТЬ */
+.safety {
+  padding: 20px;
+  background: #2a2a2a;
+  border-radius: 8px;
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.safety h1 {
+  font-size: 2rem;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.safety p {
+  font-size: 1rem;
+  color: #ffffff;
+  margin-bottom: 15px;
+}
+
+/* Стили для раздела ВЫГОДЫ */
+.profits {
+  padding: 20px;
+  background: #2a2a2a;
+  border-radius: 8px;
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.profits h1 {
+  font-size: 2rem;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profits p {
+  font-size: 1rem;
+  color: #ffffff;
+  margin-bottom: 15px;
 }
 
 /* Стили для футера */
