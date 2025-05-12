@@ -1,41 +1,89 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import './App.css';
+import { Route, Routes, Link, useParams } from 'react-router-dom';
+import Modal from 'react-modal';
+import vrmLogo from './assets/VRM.png';
+import dragonclawHook from './assets/Dragonclaw Hook.png';
+import avowance from './assets/Avowance.png';
+import exaltedFeast from './assets/Exalted Feast of Abscession - Back.png';
+
+Modal.setAppElement('#root');
+
+const items = [
+  {
+    id: 1,
+    name: 'Dragonclaw Hook',
+    price: 18083.58,
+    steamPrice: 19937.70,
+    hero: 'Pudge',
+    slot: 'Оружие',
+    type: 'Украшение',
+    rarity: 'Immortal',
+    quality: 'Standard',
+    image: dragonclawHook,
+    subtitle: 'Коготь с левой лапы черного дракона. Единственная часть монстра, выжившая после встречи с ненасытным голодом Pudge.',
+    stock: 3,
+    seller: 'JleS',
+  },
+  {
+    id: 2,
+    name: 'Arcana of the Crimson Witness',
+    price: 27153.66,
+    steamPrice: 28124.80,
+    hero: 'Phantom Assassin',
+    slot: 'Плечик',
+    type: 'Украшение',
+    rarity: 'Immortal',
+    quality: 'Standard',
+    image: avowance,
+    subtitle: 'Новая версия Crimson Witness',
+    stock: 8,
+    seller: 'kr1po4ek',
+  },
+  {
+    id: 3,
+    name: 'Exalted Feast of Abscession - Back',
+    price: 39.72,
+    steamPrice: 59.59,
+    hero: 'Pudge',
+    slot: 'Спина',
+    type: 'Украшение',
+    rarity: 'Immortal',
+    quality: 'Exalted',
+    image: exaltedFeast,
+    subtitle: 'Коготь с левой лапы черного дракона. Единственная часть монстра, выжившая после встречи с ненасытным голодом Pudge.',
+    stock: 2,
+    seller: 'kr1po4ek',
+  },
+];
 
 function App() {
-  const [items, setItems] = useState([]);
   const [cart, setCart] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showLogin, setShowLogin] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
-  const [showFAQ, setShowFAQ] = useState(false);
-  const [showCart, setShowCart] = useState(false);
-  const [showSellDiscounts, setShowSellDiscounts] = useState(false);
-  const [showBuyDiscounts, setShowBuyDiscounts] = useState(false);
-  const [showBenefits, setShowBenefits] = useState(false);
-  const [showReliability, setShowReliability] = useState(false);
-  const [showSafety, setShowSafety] = useState(false);
-  const [showProfits, setShowProfits] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loginMessage, setLoginMessage] = useState('');
-  const [registerMessage, setRegisterMessage] = useState('');
-  const [profileMessage, setProfileMessage] = useState('');
-  const [userItems, setUserItems] = useState([]); // Предметы пользователя
-  const [editingProfile, setEditingProfile] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [modalIsOpen, setModalIsOpen] = useState({ type: null });
+  const [cartModalIsOpen, setCartModalIsOpen] = useState(false);
+  const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
+  const [registerModalIsOpen, setRegisterModalIsOpen] = useState(false);
 
   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/items');
-        setItems(response.data);
-      } catch (error) {
-        console.error('Error fetching items:', error);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+
+    const showTime = () => {
+      const timeElement = document.getElementById('currentTime');
+      if (timeElement) {
+        timeElement.innerHTML = new Date().toUTCString();
       }
     };
-    fetchItems();
+    showTime();
+    const interval = setInterval(showTime, 1000);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
   }, []);
 
   const handleSearchChange = (e) => {
@@ -46,56 +94,6 @@ function App() {
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (!username || !password) {
-      setLoginMessage('Пожалуйста, заполните все поля.');
-      return;
-    }
-    if (password.length < 6) {
-      setLoginMessage('Пароль должен содержать минимум 6 символов.');
-      return;
-    }
-    if (username === 'user' && password === 'pass123') {
-      setIsLoggedIn(true);
-      setLoginMessage('Успешный вход!');
-      setShowLogin(false);
-      // Пример предметов пользователя после входа
-      setUserItems([
-        { id: 1, name: 'Dragonclaw Hook', price: 500, image: '' },
-        { id: 2, name: 'Arcana Blades', price: 300, image: '' },
-      ]);
-    } else {
-      setLoginMessage('Неверное имя пользователя или пароль.');
-    }
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setLoginMessage('');
-    setUsername('');
-    setPassword('');
-    setUserItems([]);
-    resetAllViews();
-  };
-
-  const handleRegister = (e) => {
-    e.preventDefault();
-    if (!username || !email || !password) {
-      setRegisterMessage('Заполните все поля.');
-      return;
-    }
-    if (password.length < 6) {
-      setRegisterMessage('Пароль должен содержать минимум 6 символов.');
-      return;
-    }
-    setRegisterMessage('Регистрация успешна! Вы можете войти.');
-    setShowRegister(false);
-    setUsername('');
-    setEmail('');
-    setPassword('');
-  };
-
   const addToCart = (item) => {
     setCart([...cart, item]);
   };
@@ -105,406 +103,389 @@ function App() {
   };
 
   const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + item.price, 0);
+    return cart.reduce((total, item) => total + item.price, 0).toFixed(2);
   };
 
-  const handleProfileUpdate = (e) => {
+  const openModal = (type) => {
+    setModalIsOpen({ type });
+  };
+
+  const closeModal = () => {
+    setModalIsOpen({ type: null });
+    setCartModalIsOpen(false);
+    setLoginModalIsOpen(false);
+    setRegisterModalIsOpen(false);
+  };
+
+  const handleSteamLogin = () => {
+    alert('Логин через Steam (заглушка: реализуйте API Steam)');
+  };
+
+  const handleEmailLogin = (e) => {
     e.preventDefault();
-    if (!username || !email) {
-      setProfileMessage('Заполните все поля.');
-      return;
-    }
-    setProfileMessage('Профиль успешно обновлён!');
-    setEditingProfile(false);
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    alert(`Логин через Email: ${email}, Пароль: ${password} (заглушка: реализуйте бэкенд)`);
   };
 
-  const resetAllViews = () => {
-    setShowFAQ(false);
-    setShowCart(false);
-    setShowSellDiscounts(false);
-    setShowBuyDiscounts(false);
-    setShowBenefits(false);
-    setShowReliability(false);
-    setShowSafety(false);
-    setShowProfits(false);
+  const handleGoogleLogin = () => {
+    alert('Логин через Google (заглушка: реализуйте API Google)');
   };
 
-  const showSection = (section) => {
-    resetAllViews();
-    switch (section) {
-      case 'faq':
-        setShowFAQ(true);
-        break;
-      case 'cart':
-        setShowCart(true);
-        break;
-      case 'sellDiscounts':
-        setShowSellDiscounts(true);
-        break;
-      case 'buyDiscounts':
-        setShowBuyDiscounts(true);
-        break;
-      case 'benefits':
-        setShowBenefits(true);
-        break;
-      case 'reliability':
-        setShowReliability(true);
-        break;
-      case 'safety':
-        setShowSafety(true);
-        break;
-      case 'profits':
-        setShowProfits(true);
-        break;
-      default:
-        break;
-    }
+  const handleRegister = (e) => {
+    e.preventDefault();
+    const username = e.target.username.value;
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    alert(`Регистрация: ${username}, Email: ${email}, Пароль: ${password} (заглушка: реализуйте бэкенд)`);
   };
+
+  if (isLoading) {
+    return (
+      <div className="loader-container">
+        <div className="logo-loader">
+          <div className="logo" style={{ backgroundImage: `url(${vrmLogo})` }}></div>
+        </div>
+        <p id="currentTime" style={{ color: 'white' }}></p>
+      </div>
+    );
+  }
 
   return (
     <div className="app">
-      <header className="header">
-        <div className="logo">
-          <i className="fas fa-shield-alt"></i>
-          <span onClick={() => resetAllViews()} style={{ cursor: 'pointer' }}>
-            Dota Marketplace
-          </span>
-        </div>
-        <nav className="nav">
-          <button onClick={() => showSection('sellDiscounts')} className="nav-link">
-            <i className="fas fa-tags"></i> Продать скины
-          </button>
-          <button onClick={() => showSection('buyDiscounts')} className="nav-link">
-            <i className="fas fa-shopping-bag"></i> Купить скины
-          </button>
-          <button onClick={() => showSection('faq')} className="nav-link">
-            <i className="fas fa-question-circle"></i> FAQ
-          </button>
-          <button onClick={() => showSection('cart')} className="nav-link">
-            <i className="fas fa-shopping-cart"></i> Корзина
-          </button>
-          <div className="auth-buttons">
-            {isLoggedIn ? (
-              <button onClick={handleLogout} className="logout">Выйти</button>
-            ) : (
-              <>
-                <button onClick={() => setShowLogin(true)} className="sign-in">Войти</button>
-                <button onClick={() => setShowRegister(true)} className="register">Регистрация</button>
-              </>
-            )}
+      <nav className="navbar">
+        <div className="nav-container">
+          <div className="logo">
+            VRM
           </div>
-        </nav>
-      </header>
-
-      {showLogin && (
-        <div className="login-modal">
-          <div className="login-content">
-            <h2>Вход в аккаунт</h2>
-            <form onSubmit={handleLogin}>
-              <input
-                type="text"
-                placeholder="Имя пользователя"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              <input
-                type="password"
-                placeholder="Пароль"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button type="submit">Войти</button>
-              <button type="button" onClick={() => setShowLogin(false)}>Закрыть</button>
-            </form>
-            {loginMessage && <p className={loginMessage.includes('Успешный') ? 'success' : 'error'}>{loginMessage}</p>}
+          <div className="nav-links">
+            <Link to="/sell" onClick={() => openModal('sell')}>
+              <i className="fas fa-coins"></i> Продать скины
+            </Link>
+            <Link to="/" onClick={() => openModal('buy')}>
+              <i className="fas fa-shopping-cart"></i> Купить скины
+            </Link>
+            <Link to="/help" onClick={() => openModal('help')}>
+              <i className="fas fa-question-circle"></i> Помощь
+            </Link>
+            <Link to="/cart" onClick={() => setCartModalIsOpen(true)}>
+              <i className="fas fa-shopping-basket"></i> Корзина
+            </Link>
+            <Link to="/register" onClick={() => setRegisterModalIsOpen(true)}>
+              <i className="fas fa-user-plus"></i> Регистрация
+            </Link>
+            <Link to="/login" onClick={() => setLoginModalIsOpen(true)}>
+              <i className="fas fa-sign-in-alt"></i> Вход
+            </Link>
           </div>
         </div>
-      )}
+      </nav>
 
-      {showRegister && (
-        <div className="login-modal">
-          <div className="login-content">
-            <h2>Регистрация</h2>
-            <form onSubmit={handleRegister}>
-              <input
-                type="text"
-                placeholder="Имя пользователя"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <input
-                type="password"
-                placeholder="Пароль"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button type="submit">Зарегистрироваться</button>
-              <button type="button" onClick={() => setShowRegister(false)}>Закрыть</button>
-            </form>
-            {registerMessage && <p className={registerMessage.includes('успешна') ? 'success' : 'error'}>{registerMessage}</p>}
-          </div>
-        </div>
-      )}
+      <div className="full-width title-block">
+        ПРОДАЖА И ПОКУПКА ВЕЩЕЙ ИЗ DOTA 2
+      </div>
 
-      <main className="main">
-        {isLoggedIn && !showFAQ && !showCart && !showSellDiscounts && !showBuyDiscounts && !showBenefits && !showReliability && !showSafety && !showProfits ? (
-          <section className="profile">
-            <h1>Профиль пользователя</h1>
-            <div className="profile-info">
-              <h2>Добро пожаловать, {username}!</h2>
-              <p>Email: {email || 'user@example.com'}</p>
-              {editingProfile ? (
-                <form onSubmit={handleProfileUpdate} className="edit-profile-form">
-                  <input
-                    type="text"
-                    placeholder="Имя пользователя"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  <button type="submit">Сохранить</button>
-                  <button type="button" onClick={() => setEditingProfile(false)}>Отмена</button>
-                </form>
-              ) : (
-                <button onClick={() => setEditingProfile(true)} className="edit-profile-button">
-                  Редактировать профиль
-                </button>
-              )}
-              {profileMessage && <p className={profileMessage.includes('успешно') ? 'success' : 'error'}>{profileMessage}</p>}
+      <div className="full-width benefits-container">
+        <div className="benefits-content">
+          <div className="benefits">
+            <div className="benefit-item" onClick={() => openModal('reliability')}>
+              <i className="fas fa-shield-alt benefit-icon"></i>
+              <span>НАДЁЖНОСТЬ</span>
             </div>
-            <div className="user-items">
-              <h2>Ваши предметы</h2>
-              {userItems.length > 0 ? (
-                <div className="items-list">
-                  {userItems.map((item) => (
-                    <article key={item.id} className="item-card">
-                      {item.image && <img src={item.image} alt={item.name} className="item-image" />}
-                      <h3>{item.name}</h3>
-                      <p className="price">{item.price} P</p>
-                    </article>
-                  ))}
-                </div>
-              ) : (
-                <p>У вас пока нет предметов для продажи.</p>
-              )}
+            <div className="benefit-item" onClick={() => openModal('security')}>
+              <i className="fas fa-lock benefit-icon"></i>
+              <span>БЕЗОПАСНОСТЬ</span>
             </div>
-            <aside className="sidebar">
-              <button onClick={() => showSection('benefits')} className="nav-link"><i className="fas fa-chevron-down"></i> ЧТО ВЫ ПОЛУЧАЕТЕ?</button>
-              <button onClick={() => showSection('reliability')} className="nav-link"><i className="fas fa-thumbs-up"></i> НАДЁЖНОСТЬ</button>
-              <button onClick={() => showSection('safety')} className="nav-link"><i className="fas fa-lock"></i> БЕЗОПАСНОСТЬ</button>
-              <button onClick={() => showSection('profits')} className="nav-link"><i className="fas fa-dollar-sign"></i> ВЫГОДЫ</button>
-            </aside>
-          </section>
-        ) : showFAQ ? (
-          <>
-            <section className="faq">
-              <h1>Часто задаваемые вопросы (FAQ)</h1>
-              <div className="faq-item">
-                <h3>1. Что такое Virtual Russian Market?</h3>
-                <p>VRM — это платформа для покупки и продажи вещей из игры Dota 2. Здесь вы можете найти редкие предметы, обменять их или продать свои собственные.</p>
-              </div>
-              <div className="faq-item">
-                <h3>2. Как зарегистрироваться на платформе?</h3>
-                <p>Нажмите на кнопку "Регистрация" в правом верхнем углу, заполните форму (имя пользователя, email, пароль) и подтвердите регистрацию. После этого вы сможете войти в систему.</p>
-              </div>
-              <div className="faq-item">
-                <h3>3. Безопасно ли покупать вещи на Virtual Russian Market?</h3>
-                <p>Да, мы используем современные технологии шифрования и проверяем всех продавцов, чтобы обеспечить безопасность сделок. Однако рекомендуем проверять отзывы о продавце перед покупкой.</p>
-              </div>
-              <div className="faq-item">
-                <h3>4. Как продать свои предметы?</h3>
-                <p>После регистрации перейдите в раздел "Продать скидки", добавьте предмет, укажите цену и описание. Ваш предмет будет доступен для покупки после модерации.</p>
-              </div>
-              <div className="faq-item">
-                <h3>5. Какие способы оплаты доступны?</h3>
-                <p>Мы принимаем оплату через банковские карты, электронные кошельки (например, Яндекс Деньги). Выберите удобный способ при оформлении покупки.</p>
-              </div>
-              <div className="faq-item">
-                <h3>6. Что делать, если возникли проблемы с покупкой?</h3>
-                <p>Свяжитесь с нашей службой поддержки через форму в разделе "Контакты". Мы рассмотрим ваш запрос в течение 24 часов.</p>
-              </div>
-            </section>
-            <aside className="sidebar">
-              <button onClick={() => showSection('benefits')} className="nav-link"><i className="fas fa-chevron-down"></i> ЧТО ВЫ ПОЛУЧАЕТЕ?</button>
-              <button onClick={() => showSection('reliability')} className="nav-link"><i className="fas fa-thumbs-up"></i> НАДЁЖНОСТЬ</button>
-              <button onClick={() => showSection('safety')} className="nav-link"><i className="fas fa-lock"></i> БЕЗОПАСНОСТЬ</button>
-              <button onClick={() => showSection('profits')} className="nav-link"><i className="fas fa-dollar-sign"></i> ВЫГОДЫ</button>
-            </aside>
-          </>
-        ) : showCart ? (
-          <>
-            <section className="cart">
-              <h1>Ваша Корзина</h1>
-              {cart.length > 0 ? (
-                <>
-                  <div className="cart-items">
-                    {cart.map((item) => (
-                      <div key={item.id} className="cart-item">
-                        {item.image && <img src={item.image} alt={item.name} className="cart-item-image" />}
-                        <div className="cart-item-details">
-                          <h3>{item.name}</h3>
-                          <p className="price">{item.price} P</p>
-                        </div>
-                        <button onClick={() => removeFromCart(item.id)} className="remove-from-cart">
-                          <i className="fas fa-trash"></i> Удалить
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="cart-total">
-                    <h3>Итого: {getTotalPrice()} P</h3>
-                    <button className="checkout-button">Оформить заказ</button>
-                  </div>
-                </>
-              ) : (
-                <p className="empty-cart">Ваша корзина пуста.</p>
-              )}
-            </section>
-            <aside className="sidebar">
-              <button onClick={() => showSection('benefits')} className="nav-link"><i className="fas fa-chevron-down"></i> ЧТО ВЫ ПОЛУЧАЕТЕ?</button>
-              <button onClick={() => showSection('reliability')} className="nav-link"><i className="fas fa-thumbs-up"></i> НАДЁЖНОСТЬ</button>
-              <button onClick={() => showSection('safety')} className="nav-link"><i className="fas fa-lock"></i> БЕЗОПАСНОСТЬ</button>
-              <button onClick={() => showSection('profits')} className="nav-link"><i className="fas fa-dollar-sign"></i> ВЫГОДЫ</button>
-            </aside>
-          </>
-        ) : showSellDiscounts ? (
-          <>
-            <section className="sell-discounts">
-              <h1>Продать скидки</h1>
-              <p>Здесь вы можете выставить свои предметы на продажу. Заполните форму ниже, чтобы добавить новый предмет.</p>
-              <form className="sell-form">
-                <input type="text" placeholder="Название предмета" />
-                <input type="number" placeholder="Цена (P)" />
-                <textarea placeholder="Описание предмета"></textarea>
-                <button type="submit">Добавить предмет</button>
-              </form>
-            </section>
-            <aside className="sidebar">
-              <button onClick={() => showSection('benefits')} className="nav-link"><i className="fas fa-chevron-down"></i> ЧТО ВЫ ПОЛУЧАЕТЕ?</button>
-              <button onClick={() => showSection('reliability')} className="nav-link"><i className="fas fa-thumbs-up"></i> НАДЁЖНОСТЬ</button>
-              <button onClick={() => showSection('safety')} className="nav-link"><i className="fas fa-lock"></i> БЕЗОПАСНОСТЬ</button>
-              <button onClick={() => showSection('profits')} className="nav-link"><i className="fas fa-dollar-sign"></i> ВЫГОДЫ</button>
-            </aside>
-          </>
-        ) : showBuyDiscounts ? (
-          <>
-            <section className="buy-discounts">
-              <h1>Купить скидки</h1>
-              <p>Ознакомьтесь с доступными скидками на предметы Dota 2. Вы можете приобрести их прямо сейчас!</p>
-              <div className="discount-items">
-                {filteredItems.length > 0 ? (
-                  filteredItems.map((item) => (
-                    <article key={item.id} className="discount-item">
-                      {item.image && <img src={item.image} alt={item.name} className="discount-item-image" />}
-                      <h3>{item.name}</h3>
-                      <p className="price">{item.price} P</p>
-                      <button onClick={() => addToCart(item)} className="add-to-cart">
-                        <i className="fas fa-shopping-cart"></i> В КОРЗИНУ
-                      </button>
-                    </article>
-                  ))
-                ) : (
-                  <p className="no-items">Скидки не найдены.</p>
-                )}
-              </div>
-            </section>
-            <aside className="sidebar">
-              <button onClick={() => showSection('benefits')} className="nav-link"><i className="fas fa-chevron-down"></i> ЧТО ВЫ ПОЛУЧАЕТЕ?</button>
-              <button onClick={() => showSection('reliability')} className="nav-link"><i className="fas fa-thumbs-up"></i> НАДЁЖНОСТЬ</button>
-              <button onClick={() => showSection('safety')} className="nav-link"><i className="fas fa-lock"></i> БЕЗОПАСНОСТЬ</button>
-              <button onClick={() => showSection('profits')} className="nav-link"><i className="fas fa-dollar-sign"></i> ВЫГОДЫ</button>
-            </aside>
-          </>
-        ) : showBenefits ? (
-          <section className="benefits">
-            <h1>ЧТО ВЫ ПОЛУЧАЕТЕ?</h1>
-            <p>Используя Dota Marketplace, вы получаете доступ к широкому ассортименту предметов Dota 2, удобной системе продажи и покупки, а также поддержке нашей команды.</p>
-            <ul>
-              <li>Доступ к редким предметам</li>
-              <li>Быстрая и безопасная торговля</li>
-              <li>Поддержка 24/7</li>
-              <li>Прозрачные комиссии</li>
-            </ul>
-          </section>
-        ) : showReliability ? (
-          <section className="reliability">
-            <h1>НАДЁЖНОСТЬ</h1>
-            <p>Мы проверяем всех продавцов и следим за качеством сделок, чтобы вы могли торговать с уверенностью.</p>
-            <p>Наши пользователи оставили более 10,000 положительных отзывов о нашей платформе.</p>
-          </section>
-        ) : showSafety ? (
-          <section className="safety">
-            <h1>БЕЗОПАСНОСТЬ</h1>
-            <p>Мы используем шифрование данных и двухфакторную аутентификацию для защиты ваших транзакций и личной информации.</p>
-            <p>Все сделки проходят через защищённый escrow-сервис.</p>
-          </section>
-        ) : showProfits ? (
-          <section className="profits">
-            <h1>ВЫГОДЫ</h1>
-            <p>Продавайте свои предметы по выгодным ценам и покупайте со скидками до 50%!</p>
-            <p>Участвуйте в акциях и получайте бонусы за активность на платформе.</p>
-          </section>
-        ) : (
-          <>
-            <section className="hero">
-              <h1>ПРОДАЖА И ПОКУПКА ВЕЩЕЙ ИЗ DOTA 2</h1>
-            </section>
+            <div className="benefit-item" onClick={() => openModal('profit')}>
+              <i className="fas fa-dollar-sign benefit-icon"></i>
+              <span>ВЫГОДА</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-            <aside className="sidebar">
-              <button onClick={() => showSection('benefits')} className="nav-link"><i className="fas fa-chevron-down"></i> ЧТО ВЫ ПОЛУЧАЕТЕ?</button>
-              <button onClick={() => showSection('reliability')} className="nav-link"><i className="fas fa-thumbs-up"></i> НАДЁЖНОСТЬ</button>
-              <button onClick={() => showSection('safety')} className="nav-link"><i className="fas fa-lock"></i> БЕЗОПАСНОСТЬ</button>
-              <button onClick={() => showSection('profits')} className="nav-link"><i className="fas fa-dollar-sign"></i> ВЫГОДЫ</button>
-            </aside>
+      <div className="search">
+        <div className="search-box">
+          <i className="fas fa-search"></i>
+          <input
+            type="text"
+            className="search-text"
+            placeholder="Поиск предметов..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+        </div>
+      </div>
 
-            <section className="search">
-              <div className="search-bar">
-                <input
-                  type="text"
-                  placeholder="Hinted search text"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                />
-                <button><i className="fas fa-search"></i></button>
+      <div className="items-grid container">
+        {filteredItems.map((item) => (
+          <div className="item-card" key={item.id}>
+            <Link to={`/item/${item.id}`} className="item-link">
+              <div className="item-image">
+                <img src={item.image} alt={item.name} />
               </div>
-            </section>
+              <div className="item-header">
+                <h3>{item.name}</h3>
+                <div className="item-price">{item.price.toFixed(2)} ₽</div>
+              </div>
+              <div className="item-seller">
+                <i className="fas fa-user-shield"></i>
+                {item.seller}
+              </div>
+            </Link>
+            <div className="item-footer">
+              <div className="item-stock">
+                <i className="fas fa-cubes"></i>
+                {item.stock} шт
+              </div>
+              <button className="buy-button" onClick={() => addToCart(item)}>
+                <i className="fas fa-shopping-cart"></i>
+                Добавить в корзину
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
 
-            <section className="items-list">
-              {filteredItems.length > 0 ? (
-                filteredItems.map((item) => (
-                  <article key={item.id} className="item-card">
-                    {item.image && <img src={item.image} alt={item.name} className="item-image" />}
-                    <h3>{item.name}</h3>
-                    <p className="price">{item.price} P</p>
-                    <button onClick={() => addToCart(item)} className="add-to-cart">
-                      <i className="fas fa-shopping-cart"></i> В КОРЗИНУ
-                    </button>
-                  </article>
-                ))
-              ) : (
-                <p className="no-items">Товары не найдены.</p>
-              )}
-            </section>
-          </>
-        )}
-      </main>
+      <Routes>
+        <Route path="/item/:id" element={<ItemDetail items={items} addToCart={addToCart} />} />
+        <Route path="/sell" element={<Sell />} />
+        <Route path="/help" element={<Help />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
 
-      <footer className="footer">
-        <p>© 2025 Dota Marketplace. Все права защищены.</p>
+      <footer>
+        © 2025 VRM. Все права защищены.
       </footer>
+
+      {/* Модальное окно для информации */}
+      <Modal
+        isOpen={modalIsOpen.type !== null}
+        onRequestClose={closeModal}
+        style={{
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            background: '#333',
+            border: '1px solid #555',
+            borderRadius: '8px',
+            padding: '20px',
+            maxWidth: '500px',
+            width: '90%',
+          },
+          overlay: { backgroundColor: 'rgba(0, 0, 0, 0.7)' },
+        }}
+      >
+        <h2>{modalIsOpen.type === 'sell' && 'Продать скины'}
+          {modalIsOpen.type === 'buy' && 'Купить скины'}
+          {modalIsOpen.type === 'help' && 'Помощь'}
+          {modalIsOpen.type === 'reliability' && 'Надёжность'}
+          {modalIsOpen.type === 'security' && 'Безопасность'}
+          {modalIsOpen.type === 'profit' && 'Выгода'}</h2>
+        <p>
+          {modalIsOpen.type === 'sell' && 'Здесь вы можете продать свои скины из Dota 2. Выберите предметы и укажите цену.'}
+          {modalIsOpen.type === 'buy' && 'Купите редкие скины по выгодным ценам. Используйте поиск для удобства.'}
+          {modalIsOpen.type === 'help' && 'Если у вас есть вопросы, обратитесь в нашу поддержку через чат или email.'}
+          {modalIsOpen.type === 'reliability' && 'Мы гарантируем безопасные сделки с защитой ваших данных.'}
+          {modalIsOpen.type === 'security' && 'Все транзакции защищены современными методами шифрования.'}
+          {modalIsOpen.type === 'profit' && 'Получайте больше выгоды благодаря низким комиссиям и акциям.'}
+        </p>
+        <button onClick={closeModal} className="buy-button">Закрыть</button>
+      </Modal>
+
+      {/* Модальное окно для корзины */}
+      <Modal
+        isOpen={cartModalIsOpen}
+        onRequestClose={closeModal}
+        style={{
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            background: '#333',
+            border: '1px solid #555',
+            borderRadius: '8px',
+            padding: '20px',
+            maxWidth: '600px',
+            width: '90%',
+          },
+          overlay: { backgroundColor: 'rgba(0, 0, 0, 0.7)' },
+        }}
+      >
+        <h2>Корзина</h2>
+        {cart.length > 0 ? (
+          <>
+            {cart.map((item) => (
+              <div className="item-card" key={item.id}>
+                <div className="item-image">
+                  <img src={item.image} alt={item.name} />
+                </div>
+                <div className="item-header">
+                  <h3>{item.name}</h3>
+                  <div className="item-price">{item.price.toFixed(2)} ₽</div>
+                </div>
+                <button className="buy-button" onClick={() => removeFromCart(item.id)}>Удалить</button>
+              </div>
+            ))}
+            <div className="item-price">Итого: {getTotalPrice()} ₽</div>
+          </>
+        ) : (
+          <div className="no-offers">Корзина пуста</div>
+        )}
+        <button onClick={closeModal} className="buy-button">Закрыть</button>
+      </Modal>
+
+      {/* Модальное окно для входа */}
+      <Modal
+        isOpen={loginModalIsOpen}
+        onRequestClose={closeModal}
+        style={{
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            background: '#333',
+            border: '1px solid #555',
+            borderRadius: '8px',
+            padding: '20px',
+            maxWidth: '400px',
+            width: '90%',
+          },
+          overlay: { backgroundColor: 'rgba(0, 0, 0, 0.7)' },
+        }}
+      >
+        <h2>Вход</h2>
+        <form onSubmit={handleEmailLogin}>
+          <input type="email" name="email" placeholder="Email" style={{ width: '100%', margin: '10px 0', padding: '5px' }} required />
+          <input type="password" name="password" placeholder="Пароль" style={{ width: '100%', margin: '10px 0', padding: '5px' }} required />
+          <button type="submit" className="buy-button" style={{ width: '100%' }}>Войти через Email</button>
+        </form>
+        <button onClick={handleSteamLogin} className="buy-button" style={{ width: '100%', marginTop: '10px', background: '#00aaff' }}>
+          Войти через Steam
+        </button>
+        <button onClick={handleGoogleLogin} className="buy-button" style={{ width: '100%', marginTop: '10px', background: '#4285f4' }}>
+          Войти через Google
+        </button>
+        <button onClick={closeModal} className="buy-button" style={{ width: '100%', marginTop: '10px' }}>Закрыть</button>
+      </Modal>
+
+      {/* Модальное окно для регистрации */}
+      <Modal
+        isOpen={registerModalIsOpen}
+        onRequestClose={closeModal}
+        style={{
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            background: '#333',
+            border: '1px solid #555',
+            borderRadius: '8px',
+            padding: '20px',
+            maxWidth: '400px',
+            width: '90%',
+          },
+          overlay: { backgroundColor: 'rgba(0, 0, 0, 0.7)' },
+        }}
+      >
+        <h2>Регистрация</h2>
+        <form onSubmit={handleRegister}>
+          <input type="text" name="username" placeholder="Имя пользователя" style={{ width: '100%', margin: '10px 0', padding: '5px' }} required />
+          <input type="email" name="email" placeholder="Email" style={{ width: '100%', margin: '10px 0', padding: '5px' }} required />
+          <input type="password" name="password" placeholder="Пароль" style={{ width: '100%', margin: '10px 0', padding: '5px' }} required />
+          <button type="submit" className="buy-button" style={{ width: '100%' }}>Зарегистрироваться</button>
+        </form>
+        <button onClick={handleSteamLogin} className="buy-button" style={{ width: '100%', marginTop: '10px', background: '#00aaff' }}>
+          Регистрация через Steam
+        </button>
+        <button onClick={handleGoogleLogin} className="buy-button" style={{ width: '100%', marginTop: '10px', background: '#4285f4' }}>
+          Регистрация через Google
+        </button>
+        <button onClick={closeModal} className="buy-button" style={{ width: '100%', marginTop: '10px' }}>Закрыть</button>
+      </Modal>
     </div>
   );
+}
+
+function ItemDetail({ items, addToCart }) {
+  const { id } = useParams();
+  const item = items.find((i) => i.id === parseInt(id));
+
+  if (!item) return <div>Товар не найден</div>;
+
+  return (
+    <div className="container">
+      <h1 className="item-title">{item.name}</h1>
+      <p className="item-subtitle">{item.subtitle}</p>
+      <div className="item-details">
+        <div className="item-image">
+          <img src={item.image} alt={item.name} className="item-img" />
+        </div>
+        <div className="item-info">
+          <table className="item-table">
+            <tr><td>Герой</td><td>{item.hero}</td></tr>
+            <tr><td>Слот</td><td>{item.slot}</td></tr>
+            <tr><td>Тип</td><td>{item.type}</td></tr>
+            <tr><td>Раритетность</td><td>{item.rarity}</td></tr>
+            <tr><td>Качество</td><td>{item.quality}</td></tr>
+          </table>
+          <div className="item-price">{item.price.toFixed(2)} ₽</div>
+          <div className="item-steam-price">Steam: {item.steamPrice.toFixed(2)} ₽</div>
+          <button className="buy-button" onClick={() => addToCart(item)}>КУПИТЬ СЕЙЧАС</button>
+        </div>
+      </div>
+      <h2 className="offers-title">Текущие предложения</h2>
+      {item.offers && item.offers.length > 0 ? (
+        <div className="offers-list">
+          {item.offers.map((offer, index) => (
+            <div className="offer-row" key={index}>
+              <div className="offer-price">{offer.price.toFixed(2)} ₽</div>
+              <div className="offer-actions">
+                <button className="buy-button small now" onClick={() => addToCart(item)}>Купить сейчас</button>
+                <button className="buy-button small cart" onClick={() => addToCart(item)}>В корзину</button>
+              </div>
+              <div className="offer-seller">
+                <i className="fas fa-user"></i>
+                {offer.seller}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="no-offers">Никто не продаёт выбранный товар</div>
+      )}
+    </div>
+  );
+}
+
+function Sell() {
+  return <div className="container"><h1>Продать скины</h1><p>Функция в разработке</p></div>;
+}
+
+function Help() {
+  return <div className="container"><h1>Помощь</h1><p>Функция в разработке</p></div>;
+}
+
+function Register() {
+  return <div className="container"><h1>Регистрация</h1><p>Функция в разработке</p></div>;
+}
+
+function Login() {
+  return <div className="container"><h1>Вход</h1><p>Функция в разработке</p></div>;
 }
 
 export default App;
