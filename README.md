@@ -1,70 +1,80 @@
-# Getting Started with Create React App
+# **🛒 VRM — Virtual Russian Market**  
+### **Твой виртуальный рынок для скинов и предметов Dota 2**  
+*Покупай, продавай и обменивай крутые вещи из Dota 2 с гарантией безопасности!*  
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+---
 
-## Available Scripts
+## **🔥 Что такое VRM?**  
+**VRM** — это торговая площадка, где фанаты Dota 2 могут:  
+✅ **Покупать и продавать** скины, предметы и аккаунты  
+✅ **Обмениваться** вещами через безопасные сделки  
+✅ **Зарабатывать** на торговле внутриигровыми предметами  
+✅ **Находить редкие** и коллекционные вещи  
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## **🚀 Возможности**  
+✨ **Безопасные сделки** — Escrow-система и защита от мошенников  
+✨ **Мгновенные сделки** — Автоматические трейды через Steam API  
+✨ **Гибкие цены** — Торгуйся или покупай по фиксированной стоимости  
+✨ **Рейтинги продавцов** — Выбирай проверенных трейдеров  
+✨ **Уведомления** — Следи за сделками и новыми предложениями  
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## **🛠 Технологии**  
+| **Часть**       | **Стек**                     |
+|----------------|-----------------------------|
+| **Frontend**   | React, Next.js, TailwindCSS  |
+| **Backend**    | Node.js (Express)            |
+| **База данных**| PostgreSQL                   |
+| **Авторизация**| Steam OpenID, JWT            |
+| **Деплой**     | GitHub Pages                 |
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## **📌 Как начать?**  
 
-### `npm run build`
+### **1️⃣ Для покупателей**  
+1. **Зайди на сайт** 
+2. **Авторизуйся через Steam**  
+3. **Найди нужный предмет** через поиск или фильтры  
+4. **Оплати сделку** (СБП)  
+5. **Получи предмет** мгновенно в Steam-инвентарь!  
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### **2️⃣ Для продавцов**  
+1. **Создай аккаунт** и подключи Steam-трейд ссылку  
+2. **Выстави предмет** на продажу (укажи цену и описание)  
+3. **Жди покупателя** — получи уведомление о сделке  
+4. **Подтверди обмен** — деньги зачислятся на твой баланс  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## **💻 Локальный запуск (для разработчиков)**  
 
-### `npm run eject`
+### **1. Клонируй репозиторий**  
+```bash
+git clone https://github.com/MyNameIsNikki/VRM.git
+cd VRM
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### **2. Запусти проект**  
+```bash
+npm start (http://localhost:3000)
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## **📜 Правила**  
+🔹 **Запрещены** мошенничество и обман  
+🔹 **Только легальные** предметы (без читов и багов)  
+🔹 **Администрация** может заблокировать подозрительные сделки  
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## **⚖️ Лицензия**  
+**VRM** © 2025 — *Open-source (MIT)*  
+*Не аффилирован с Valve или Steam*  
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Этот `README` можно адаптировать под ваш дизайн. Хотите добавить больше деталей? 😊
