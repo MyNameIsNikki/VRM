@@ -60,7 +60,8 @@ cd VRM
 
 ### **2. Запусти проект**  
 ```bash
-npm start (http://localhost:3000)
+Корень проекта/cd public/npm start (http://localhost:3000 - Frontend)
+Корень проекта/cd server/node server.js (http://localhost:5000 - Backend)
 ```
 
 ---
