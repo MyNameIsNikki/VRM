@@ -1,8 +1,11 @@
+/*Запуск для проверки из routes node auth.js */
+
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
+const pool = require('../db'); // Added for CLI mode
 
 // Валидация регистрации
 const validateRegister = [
@@ -16,6 +19,56 @@ const validateLogin = [
   check('login').notEmpty().withMessage('Логин обязателен'),
   check('password').notEmpty().withMessage('Пароль обязателен')
 ];
+
+// Функция для проверки таблицы и вывода всех колонок
+async function logTableInfo(client, tableName) {
+  try {
+    const checkRes = await client.query(
+      `SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+        AND table_name = $1
+      )`,
+      [tableName.toLowerCase()]
+    );
+    
+    const exists = checkRes.rows[0].exists;
+    console.log(`- Таблица "${tableName}": ${exists ? '✓ найдена' : '✗ отсутствует'}`);
+    
+    if (exists) {
+      const countRes = await client.query(`SELECT COUNT(*) FROM public.users`);
+      console.log(`  Записей: ${countRes.rows[0].count}`);
+      
+      const dataRes = await client.query(`SELECT * FROM public.users ORDER BY id LIMIT 10`);
+      console.log('  Содержимое таблицы:');
+      if (dataRes.rows.length === 0) {
+        console.log('    Нет данных в таблице.');
+      } else {
+        dataRes.rows.forEach((row, index) => {
+          console.log(`    Запись ${index + 1}:`, JSON.stringify(row));
+        });
+        if (countRes.rows[0].count > 10) {
+          console.log(`    ...и еще ${countRes.rows[0].count - 10} записей`);
+        }
+      }
+    } else {
+      const tablesRes = await client.query(
+        `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'`
+      );
+      console.log('  Доступные таблицы в схеме public:', tablesRes.rows.map(row => row.table_name).join(', ') || 'нет таблиц');
+    }
+  } catch (tableError) {
+    console.error(`  Ошибка проверки таблицы "${tableName}":`, tableError.message);
+    try {
+      const tablesRes = await client.query(
+        `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'`
+      );
+      console.log('  Доступные таблицы в схеме public:', tablesRes.rows.map(row => row.table_name).join(', ') || 'нет таблиц');
+    } catch (diagError) {
+      console.error('  Ошибка при получении списка таблиц:', diagError.message);
+    }
+  }
+}
 
 // Регистрация пользователя
 router.post('/register', validateRegister, async (req, res) => {
@@ -89,5 +142,61 @@ router.post('/login', validateLogin, async (req, res) => {
     res.status(500).json({ error: 'Ошибка сервера при входе' });
   }
 });
+
+// CLI mode
+async function runCLIMode() {
+  console.log('Попытка подключения к базе данных...');
+  let client;
+  try {
+    client = await pool.connect();
+    console.log('✓ Подключение к БД успешно установлено');
+    
+    await logTableInfo(client, 'users');
+    
+    console.log('\n✓ Все проверки завершены');
+  } catch (error) {
+    console.error('\n✗ Ошибка подключения:', error.message);
+    console.error('Стек ошибки:', error.stack);
+    
+    if (error.code) {
+      console.error('\nКод ошибки:', error.code);
+      console.error('Возможные причины:');
+      
+      switch (error.code) {
+        case 'ECONNREFUSED':
+          console.error('- Сервер БД не запущен или недоступен');
+          console.error('- Неправильный порт или хост');
+          break;
+        case '28P01':
+          console.error('- Неверное имя пользователя или пароль');
+          break;
+        case '3D000':
+          console.error('- База данных не существует');
+          console.error(`- Проверьте имя БД: ${process.env.DB_NAME || 'не указано'}`);
+          break;
+        case 'ENOTFOUND':
+          console.error('- Сервер БД не найден (проверьте хост)');
+          break;
+        case 'ETIMEDOUT':
+          console.error('- Таймаут подключения (проверьте доступность сервера)');
+          break;
+        default:
+          console.error('- Неизвестная ошибка, проверьте параметры подключения');
+      }
+    }
+  } finally {
+    if (client) client.release();
+    console.log('\nЗавершение работы с пулом соединений');
+    await pool.end();
+    console.log('Скрипт завершен');
+  }
+}
+
+if (require.main === module) {
+  runCLIMode().catch(err => {
+    console.error('Ошибка выполнения скрипта:', err.message);
+    process.exit(1);
+  });
+}
 
 module.exports = router;
