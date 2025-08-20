@@ -143,7 +143,7 @@
 
 ## 📁 Структура проекта
 
-```plaintext
+```
 VRM/
 ├── image/                 # SVG icons for the interface
 │   ├── Authorization.svg
