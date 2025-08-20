@@ -143,7 +143,6 @@
 
 ## 📁 Структура проекта
 
-```
 VRM/
 ├── image/                 # SVG icons for the interface
 │   ├── Authorization.svg
@@ -185,7 +184,7 @@ VRM/
 │   ├── App.css
 │   └── index.js
 └── README.md           # Documentation
-8 directories, 65 files```
+8 directories, 65 files
 
 ---
 
