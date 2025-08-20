@@ -38,12 +38,46 @@
 
 ## 🚀 Возможности
 
-- **🔒 Безопасные сделки:** Используется Escrow-система и строгая модерация для защиты пользователей.
-- **⚡ Мгновенные трейды:** Интеграция с Steam API позволяет проводить обмены автоматически и моментально.
-- **📊 Система рейтингов:** Выбирайте продавцов с лучшей репутацией для уверенности в сделке.
-- **💸 Гибкая оплата:** Поддержка СБП и других удобных способов оплаты.
-- **🔔 Умные уведомления:** Следите за статусом ваших сделок, новыми предложениями и ценами.
-- **🎯 Поиск и фильтры:** Легко находите даже самые редкие и коллекционные предметы.
+<p align="center">
+  <table>
+    <tr>
+      <td align="center" width="110">
+        <img src="image/Замок.svg" width="40" alt="Security"/>
+        <br>
+        <b>Безопасность</b>
+      </td>
+      <td align="center" width="110">
+        <img src="image/Молния.svg" width="40" alt="Fast trades"/>
+        <br>
+        <b>Мгновенные сделки</b>
+      </td>
+      <td align="center" width="110">
+        <img src="image/Рейтинг.svg" width="40" alt="Ratings"/>
+        <br>
+        <b>Система рейтингов</b>
+      </td>
+      <td align="center" width="110">
+        <img src="image/Кошелек.svg" width="40" alt="Payment"/>
+        <br>
+        <b>Гибкая оплата</b>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        Escrow-система и модерация
+      </td>
+      <td align="center">
+        Автоматические обмены
+      </td>
+      <td align="center">
+        Проверенные продавцы
+      </td>
+      <td align="center">
+        СБП и другие методы
+      </td>
+    </tr>
+  </table>
+</p>
 
 ---
 
@@ -142,80 +176,48 @@
 ---
 
 ## 📁 Структура проекта
-└── 📁 VRM
-    ├── 📁 .github
-    │   └── 📄 workflows
-    ├── 📁 image
-    │   ├── 📄 Авторизация 2.svg
-    │   ├── 📄 Авторизация 3.svg
-    │   ├── 📄 Авторизация.svg
-    │   ├── 📄 Бакс.svg
-    │   ├── 📄 Баланс.svg
-    │   ├── 📄 Большая корзина.svg
-    │   ├── 📄 Галочка.svg
-    │   ├── 📄 Замок.svg
-    │   ├── 📄 Корзина.svg
-    │   ├── 📄 Купить.svg
-    │   ├── 📄 Лайк.svg
-    │   ├── 📄 Лого.svg
-    │   ├── 📄 Нижняя планка.svg
-    │   ├── 📄 Панель.svg
-    │   ├── 📄 Плюсик.svg
-    │   ├── 📄 Поисковик.svg
-    │   ├── 📄 Пользователь побольше.svg
-    │   ├── 📄 Пользователь.svg
-    │   ├── 📄 Предмет.svg
-    │   ├── 📄 Предметы.svg
-    │   ├── 📄 Привязка.svg
-    │   ├── 📄 Собака(пьёс).svg
-    │   ├── 📄 Список.svg
-    │   ├── 📄 Управление аккаунтом.svg
-    │   ├── 📄 Урна.svg
-    │   ├── 📄 Хештег.svg
-    │   └── 📄 FAQ.svg
-    ├── 📁 node_modules
-    ├── 📁 public
-    │   ├── 📄 favicon.ico
-    │   ├── 📄 index.html
-    │   ├── 📄 logo192.png
-    │   ├── 📄 logo512.png
-    │   ├── 📄 manifest.json
-    │   └── 📄 robots.txt
-    ├── 📁 server
-    │   ├── 📁 data
-    │   │   └── 📄 db.json
-    │   ├── 📁 node_modules
-    │   ├── 📁 routes
-    │   │   ├── 📄 auth.js
-    │   │   ├── 📄 items.js
-    │   │   ├── 📄 orders.js
-    │   │   ├── 📄 purchaseHistory.js
-    │   │   └── 📄 sellers.js
-    │   ├── 📄 .env
-    │   ├── 📄 data_db.js
-    │   ├── 📄 db.js
-    │   ├── 📄 db.sql
-    │   ├── 📄 package-lock.json
-    │   ├── 📄 package.json
-    │   └── 📄 server.js
-    ├── 📁 src
-    │   ├── 📁 assets
-    │   │   ├── 📄 Avowance.png
-    │   │   ├── 📄 Dragonclaw Hook.png
-    │   │   ├── 📄 Exalted Feast of Abscession - Back.png
-    │   │   └── 📄 VRM.png
-    │   ├── 📄 App.css
-    │   ├── 📄 App.js
-    │   ├── 📄 App.test.js
-    │   ├── 📄 index.css
-    │   ├── 📄 index.js
-    │   ├── 📄 logo.svg
-    │   ├── 📄 reportWebVitals.js
-    │   └── 📄 setupTests.js
-    ├── 📄 .gitignore
-    ├── 📄 package-lock.json
-    ├── 📄 package.json
-    ├── 📄 README.md
+VRM/
+├── 📁 image/                 # SVG иконки интерфейса
+│   ├── 📄 Авторизация.svg
+│   ├── 📄 Бакс.svg
+│   ├── 📄 Баланс.svg
+│   ├── 📄 Корзина.svg
+│   ├── 📄 Купить.svg
+│   ├── 📄 Лайк.svg
+│   ├── 📄 Лого.svg
+│   ├── 📄 Панель.svg
+│   ├── 📄 Поисковик.svg
+│   ├── 📄 Предметы.svg
+│   └── 📄 ... (65 файлов)
+├── 📁 public/               # Статические файлы
+│   ├── 📄 favicon.ico
+│   ├── 📄 index.html
+│   ├── 📄 logo192.png
+│   ├── 📄 logo512.png
+│   ├── 📄 manifest.json
+│   └── 📄 robots.txt
+├── 📁 server/               # Backend (Node.js + Express)
+│   ├── 📁 data/            # Данные (db.json)
+│   ├── 📁 routes/          # API endpoints
+│   │   ├── 📄 auth.js
+│   │   ├── 📄 items.js
+│   │   ├── 📄 orders.js
+│   │   ├── 📄 purchaseHistory.js
+│   │   └── 📄 sellers.js
+│   ├── 📄 .env
+│   ├── 📄 db.js
+│   ├── 📄 db.sql
+│   └── 📄 server.js
+├── 📁 src/                 # Frontend (React)
+│   ├── 📁 assets/         # Изображения
+│   │   ├── 📄 Avowance.png
+│   │   ├── 📄 Dragonclaw Hook.png
+│   │   ├── 📄 Exalted Feast of Abscession - Back.png
+│   │   └── 📄 VRM.png
+│   ├── 📄 App.js
+│   ├── 📄 App.css
+│   └── 📄 index.js
+└── 📄 README.md           # Documentation
 8 directories, 65 files
 
 ---
@@ -242,3 +244,4 @@
 - **Репозиторий:** [https://github.com/MyNameIsNikki/VRM](https://github.com/MyNameIsNikki/VRM)
 - **Steam:** [https://store.steampowered.com](https://store.steampowered.com)
 - **Valve:** [https://www.valvesoftware.com](https://www.valvesoftware.com)
+<p align="center"> <strong>Сделано с ❤️ для сообщества Dota 2</strong> </p>
