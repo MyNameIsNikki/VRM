@@ -142,48 +142,49 @@
 ---
 
 ## 📁 Структура проекта
+
+```plaintext
 VRM/
-├── 📁 image/                 # SVG иконки интерфейса
-│   ├── 📄 Авторизация.svg
-│   ├── 📄 Бакс.svg
-│   ├── 📄 Баланс.svg
-│   ├── 📄 Корзина.svg
-│   ├── 📄 Купить.svg
-│   ├── 📄 Лайк.svg
-│   ├── 📄 Лого.svg
-│   ├── 📄 Панель.svg
-│   ├── 📄 Поисковик.svg
-│   ├── 📄 Предметы.svg
-│   └── 📄 ... (65 файлов)
-├── 📁 public/               # Статические файлы
-│   ├── 📄 favicon.ico
-│   ├── 📄 index.html
-│   ├── 📄 logo192.png
-│   ├── 📄 logo512.png
-│   ├── 📄 manifest.json
-│   └── 📄 robots.txt
-├── 📁 server/               # Backend (Node.js + Express)
-│   ├── 📁 data/            # Данные (db.json)
-│   ├── 📁 routes/          # API endpoints
-│   │   ├── 📄 auth.js
-│   │   ├── 📄 items.js
-│   │   ├── 📄 orders.js
-│   │   ├── 📄 purchaseHistory.js
-│   │   └── 📄 sellers.js
-│   ├── 📄 .env
-│   ├── 📄 db.js
-│   ├── 📄 db.sql
-│   └── 📄 server.js
-├── 📁 src/                 # Frontend (React)
-│   ├── 📁 assets/         # Изображения
-│   │   ├── 📄 Avowance.png
-│   │   ├── 📄 Dragonclaw Hook.png
-│   │   ├── 📄 Exalted Feast of Abscession - Back.png
-│   │   └── 📄 VRM.png
-│   ├── 📄 App.js
-│   ├── 📄 App.css
-│   └── 📄 index.js
-└── 📄 README.md           # Documentation
+├── image/                 # SVG icons for the interface
+│   ├── Authorization.svg
+│   ├── Balance.svg
+│   ├── Cart.svg
+│   ├── Buy.svg
+│   ├── Like.svg
+│   ├── Logo.svg
+│   ├── Panel.svg
+│   ├── Search.svg
+│   ├── Items.svg
+│   └── ... (65 files)
+├── public/               # Static files
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── logo192.png
+│   ├── logo512.png
+│   ├── manifest.json
+│   └── robots.txt
+├── server/               # Backend (Node.js + Express)
+│   ├── data/            # Data (db.json)
+│   ├── routes/          # API endpoints
+│   │   ├── auth.js
+│   │   ├── items.js
+│   │   ├── orders.js
+│   │   ├── purchaseHistory.js
+│   │   └── sellers.js
+│   ├── .env
+│   ├── db.js
+│   ├── db.sql
+│   └── server.js
+├── src/                 # Frontend (React)
+│   ├── assets/         # Images
+│   │   ├── Avowance.png
+│   │   ├── Dragonclaw Hook.png
+│   │   ├── Exalted Feast of Abscession - Back.png
+│   │   └── VRM.png
+│   ├── App.js
+│   ├── App.css
+│   └── index.js
+└── README.md           # Documentation
 8 directories, 65 files
 
 ---
