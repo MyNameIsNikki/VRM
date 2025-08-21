@@ -1,0 +1,115 @@
+.trade-rules-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 0;
+  max-width: 800px;
+  width: 90%;
+  max-height: 80vh;
+  overflow: hidden;
+  color: #e0e0e0;
+  font-family: 'Arial', sans-serif;
+}
+
+.trade-rules-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  z-index: 1000;
+}
+
+.trade-rules-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #333;
+  background: #252525;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.trade-rules-modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #ffcc00;
+}
+
+.trade-rules-modal-content {
+  padding: 20px;
+  overflow-y: auto;
+  max-height: calc(80vh - 140px);
+  line-height: 1.6;
+}
+
+.trade-rules-text h3 {
+  color: #ffcc00;
+  margin-top: 25px;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.trade-rules-text p {
+  margin-bottom: 15px;
+}
+
+.trade-rules-update-date {
+  font-style: italic;
+  color: #888;
+  margin-bottom: 20px;
+}
+
+.trade-rules-date {
+  font-style: italic;
+  color: #888;
+  margin-top: 25px;
+  text-align: right;
+}
+
+.trade-rules-modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #333;
+  background: #252525;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.trade-rules-close-btn {
+  background: #ffcc00;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.trade-rules-close-btn:hover {
+  background: #e6b800;
+}
+
+.trade-rules-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.trade-rules-modal-content::-webkit-scrollbar-track {
+  background: #2a2a2a;
+}
+
+.trade-rules-modal-content::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+.trade-rules-modal-content::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}

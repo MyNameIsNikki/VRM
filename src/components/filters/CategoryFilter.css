@@ -1,0 +1,5 @@
+.checkboxes-list-scroll {
+    max-height: 150px;
+    overflow-y: auto;
+    padding-right: 5px;
+}

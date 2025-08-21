@@ -1,0 +1,149 @@
+.item-detail {
+    padding: 40px 20px;
+}
+
+.item-title {
+    color: #cc9999;
+    font-size: 32px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.item-subtitle {
+    color: #ccb0b0;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 18px;
+}
+
+.item-details {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.item-image .item-img {
+  max-width: 100%;
+  height: auto;
+  max-height: 70vh;
+  object-fit: contain;
+}
+
+.item-info {
+    flex: 1;
+    min-width: 300px;
+}
+
+.item-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.item-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #4a0000;
+}
+
+.item-table td:first-child {
+    color: #cc9999;
+    font-weight: 500;
+    width: 40%;
+}
+
+.price-block {
+    background: linear-gradient(145deg, #2a1a1a, #1a0e0e);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #4a0000;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(90, 0, 0, 0.2);
+}
+
+.item-steam-price {
+    color: #ccb0b0;
+    font-size: 16px;
+    margin: 10px 0;
+    text-decoration: line-through;
+}
+
+.offers-title {
+    color: #cc9999;
+    font-size: 24px;
+    margin: 40px 0 20px;
+    text-align: center;
+}
+
+.offers-list {
+    background: linear-gradient(145deg, #2a1a1a, #1a0e0e);
+    border-radius: 8px;
+    border: 1px solid #4a0000;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(90, 0, 0, 0.2);
+}
+
+.offer-row {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #4a0000;
+}
+
+.offer-row:last-child {
+    border-bottom: none;
+}
+
+.offer-price {
+    color: #66cc99;
+    font-weight: 700;
+    font-size: 18px;
+    min-width: 120px;
+}
+
+.offer-actions {
+    display: flex;
+    gap: 10px;
+    margin: 0 20px;
+}
+
+.buy-button.small {
+    min-width: auto;
+    padding: 8px 15px;
+    font-size: 12px;
+    height: auto;
+}
+
+.offer-seller {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #ccb0b0;
+    font-size: 14px;
+    margin-left: auto;
+}
+
+.no-offers {
+    text-align: center;
+    padding: 30px;
+    color: #ccb0b0;
+    font-size: 18px;
+}
+
+.back-to-home {
+    text-align: center;
+    margin-top: 40px;
+}
+
+@media (max-width: 992px) {
+  .item-image .item-img {
+    max-width: 100%;
+    max-height: 60vh;
+  }
+}
+
+@media (max-width: 576px) {
+  .item-image .item-img {
+    max-height: 50vh;
+  }
+}

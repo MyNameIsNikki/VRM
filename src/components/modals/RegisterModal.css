@@ -1,0 +1,138 @@
+/* src/components/modals/RegisterModal.css */
+
+.register-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.register-modal {
+  position: relative;
+  z-index: 2;
+  width: 400px;
+  max-width: 92%;
+  padding: 36px 28px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 30px rgba(2, 8, 20, 0.5);
+  backdrop-filter: blur(8px) saturate(1.1);
+  color: #f4f4f4;
+}
+
+.register-modal .title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 24px;
+  color: #ffffff;
+  letter-spacing: 0.6px;
+  text-align: center;
+}
+
+.register-modal .field {
+  margin-bottom: 18px;
+}
+
+.register-modal .field label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.register-modal .field label span {
+  color: #ff6b6b;
+}
+
+.register-modal .field input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f4f4f4;
+  font-size: 15px;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.register-modal .field input:focus {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.register-modal .hint {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 4px;
+  margin-left: 2px;
+}
+
+.register-modal .checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.register-modal .checkbox input {
+  margin-top: 3px;
+}
+
+.register-modal .checkbox label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.4;
+}
+
+.register-modal .btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #570000;
+  font-weight: 700;
+  border: 0;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.38);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+  margin-bottom: 16px;
+}
+
+.register-modal .btn:active {
+  transform: translateY(1px);
+}
+
+.register-modal .bottom-note {
+  text-align: center;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 12px;
+}
+
+.register-modal a.link {
+  color: #eaf6ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.register-modal .error {
+  color: #ff6b6b;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+@media (max-width: 420px) {
+  .register-modal {
+    padding: 26px 18px;
+  }
+}
