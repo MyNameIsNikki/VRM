@@ -202,9 +202,75 @@
     ├── 📁 src
     │   ├── 📁 assets
     │   │   ├── 📄 Avowance.png
+    │   │   ├── 📄 Avowance.svg
     │   │   ├── 📄 Dragonclaw Hook.png
+    │   │   ├── 📄 Dragonclaw Hook.svg
     │   │   ├── 📄 Exalted Feast of Abscession - Back.png
+    │   │   ├── 📄 Exalted Feast of Abscession - Back.svg
+    │   │   ├── 📄 Fractal Horns of Inner Abysm.svg
+    │   │   ├── 📄 Genuine Ice Baby Roshan.svg
+    │   │   ├── 📄 Golden Basher Blades.svg
+    │   │   ├── 📄 Golden Crucible of Rile.svg
+    │   │   ├── 📄 Golden Profane Union.svg
+    │   │   ├── 📄 Golden Shadow Masque.svg
+    │   │   ├── 📄 Head of the Odobenus One.svg
+    │   │   ├── 📄 Inscribed Bracers of Aeons of the Crimson Witness.svg
+    │   │   ├── 📄 Soul Diffuser.svg
     │   │   └── 📄 VRM.png
+    │   ├── 📁 components
+    │   │   ├── 📁 Benefits
+    │   │   │   ├── 📄 Benefits.css
+    │   │   │   └── 📄 Benefits.jsx
+    │   │   ├── 📁 filters
+    │   │   │   ├── 📄 CategoryFilter.css
+    │   │   │   ├── 📄 CategoryFilter.jsx
+    │   │   │   ├── 📄 PriceFilter.css
+    │   │   │   └── 📄 PriceFilter.jsx
+    │   │   ├── 📁 Header
+    │   │   │   ├── 📄 Header.css
+    │   │   │   └── 📄 Header.jsx
+    │   │   ├── 📁 ItemCard
+    │   │   │   ├── 📄 ItemCard.css
+    │   │   │   └── 📄 ItemCard.jsx
+    │   │   ├── 📁 modals
+    │   │   │   ├── 📄 AuthModal.css
+    │   │   │   ├── 📄 AuthModal.js
+    │   │   │   ├── 📄 CartModal.css
+    │   │   │   ├── 📄 CartModal.js
+    │   │   │   ├── 📄 InfoModal.js
+    │   │   │   ├── 📄 modals.css
+    │   │   │   ├── 📄 RegisterModal.css
+    │   │   │   ├── 📄 RegisterModal.js
+    │   │   │   ├── 📄 RulesModal.css
+    │   │   │   ├── 📄 RulesModal.js
+    │   │   │   ├── 📄 SecurityPolicyModal.css
+    │   │   │   ├── 📄 SecurityPolicyModal.js
+    │   │   │   ├── 📄 TermsModal.css
+    │   │   │   ├── 📄 TermsModal.js
+    │   │   │   ├── 📄 TradeRulesModal.css
+    │   │   │   └── 📄 TradeRulesModal.js
+    │   │   ├── 📁 SearchBar
+    │   │   │   ├── 📄 SearchBar.css
+    │   │   │   └── 📄 SearchBar.jsx
+    │   │   ├── 📄 ToastNotification.css
+    │   │   └── 📄 ToastNotification.js
+    │   ├── 📁 data
+    │   │   └── 📄 items.jsx
+    │   ├── 📁 pages
+    │   │   ├── 📄 HelpPage.css
+    │   │   ├── 📄 HelpPage.jsx
+    │   │   ├── 📄 HomePage.css
+    │   │   ├── 📄 HomePage.jsx
+    │   │   ├── 📄 ItemDetailPage.css
+    │   │   ├── 📄 ItemDetailPage.jsx
+    │   │   ├── 📄 ShopPage.css
+    │   │   └── 📄 ShopPage.jsx
+    │   ├── 📁 services
+    │   │   ├── 📄 api.js
+    │   │   ├── 📄 authService.js
+    │   │   ├── 📄 itemService.js
+    │   │   └── 📄 orderService.js
+    │   ├── 📄 .env
     │   ├── 📄 App.css
     │   ├── 📄 App.js
     │   ├── 📄 App.test.js
@@ -216,9 +282,8 @@
     ├── 📄 .gitignore
     ├── 📄 package-lock.json
     ├── 📄 package.json
-    ├── 📄 README.md
-    └── 📄 tree.txt
-8 directories, 65 files
+    └── 📄 README.md
+21 directories, 123 files
 ```
 ---
 
