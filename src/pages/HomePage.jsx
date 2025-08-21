@@ -20,7 +20,7 @@ const HomePage = ({ filteredItems, addToCart, handleSearchChange, searchQuery, o
       
       <div className="items-grid container">
         {filteredItems.map((item) => (
-          <ItemCard key={item.id} item={item} addToCart={addToCart} />
+          <ItemCard key={item.id_item} item={item} addToCart={addToCart} />
         ))}
       </div>
     </div>

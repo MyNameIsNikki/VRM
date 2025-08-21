@@ -9,6 +9,7 @@ import TermsModal from '../components/modals/TermsModal';
 import SecurityPolicyModal from '../components/modals/SecurityPolicyModal';
 import TradeRulesModal from '../components/modals/TradeRulesModal';
 import './HelpPage.css';
+import { orderService } from '../services/orderService';
 
 const HelpPage = ({ 
   cart, 
@@ -50,6 +51,7 @@ const HelpPage = ({
       [name]: value
     }));
   };
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();

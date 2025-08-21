@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import { Route, Routes} from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Modal from 'react-modal';
 import Header from './components/Header/Header';
 import HomePage from './pages/HomePage';
@@ -9,7 +9,8 @@ import ItemDetailPage from './pages/ItemDetailPage';
 import HelpPage from './pages/HelpPage';
 import InfoModal from './components/modals/InfoModal';
 import AuthModal from './components/modals/AuthModal';
-import items from './data/items';
+import { authService } from './services/authService';
+import { itemService } from './services/itemService';
 import vrmLogo from './assets/VRM.png';
 
 Modal.setAppElement('#root');
@@ -26,6 +27,9 @@ function App() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loginErrors, setLoginErrors] = useState({});
   const [registerErrors, setRegisterErrors] = useState({});
+  const [items, setItems] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -42,18 +46,51 @@ function App() {
     showTime();
     const interval = setInterval(showTime, 1000);
 
+    // Проверка аутентификации
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    if (token && user) {
+      setIsAuthenticated(true);
+      setCurrentUser(JSON.parse(user));
+    }
+
+    // Загрузка товаров
+    loadItems();
+
     return () => {
       clearTimeout(timer);
       clearInterval(interval);
     };
   }, []);
 
+  const loadItems = async () => {
+    try {
+      const response = await itemService.getAll();
+      setItems(response.data);
+    } catch (error) {
+      console.error('Ошибка загрузки товаров:', error);
+    }
+  };
+
+  const handleLogin = (userData, token) => {
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(userData));
+    setIsAuthenticated(true);
+    setCurrentUser(userData);
+  };
+
+  const handleLogout = () => {
+    authService.logout();
+    setIsAuthenticated(false);
+    setCurrentUser(null);
+  };
+
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
 
   const filteredItems = items.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    item.nazvanie.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const addToCart = (item) => {
@@ -61,11 +98,11 @@ function App() {
   };
 
   const removeFromCart = (itemId) => {
-    setCart(cart.filter((item) => item.id !== itemId));
+    setCart(cart.filter((item) => item.id_item !== itemId));
   };
 
   const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + item.price, 0).toFixed(2);
+    return cart.reduce((total, item) => total + parseFloat(item.price), 0).toFixed(2);
   };
 
   const openModal = (type) => {
@@ -100,7 +137,7 @@ function App() {
     closeModal();
   };
 
-  const handleEmailLogin = (e) => {
+  const handleEmailLogin = async (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
@@ -114,11 +151,17 @@ function App() {
       return;
     }
     
-    alert(`Логин через Email: ${email} (заглушка: реализуйте бэкенд)`);
-    closeModal();
+    try {
+      const response = await authService.login({ login: email, password });
+      const { token, user } = response.data;
+      handleLogin(user, token);
+      closeModal();
+    } catch (error) {
+      setLoginErrors({ general: 'Ошибка входа: проверьте данные' });
+    }
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     const username = e.target.username.value;
     const email = e.target.email.value;
@@ -152,8 +195,18 @@ function App() {
       return;
     }
     
-    alert(`Регистрация: ${username}, Email: ${email} (заглушка: реализуйте бэкенд)`);
-    closeModal();
+    try {
+      const response = await authService.register({
+        login: username,
+        password,
+        link: email
+      });
+      const { token, user } = response.data;
+      handleLogin(user, token);
+      closeModal();
+    } catch (error) {
+      setRegisterErrors({ general: 'Ошибка регистрации' });
+    }
   };
 
   if (isLoading) {
@@ -172,6 +225,9 @@ function App() {
       <Header 
         openModal={openModal}
         cart={cart}
+        isAuthenticated={isAuthenticated}
+        currentUser={currentUser}
+        handleLogout={handleLogout}
       />
       
       <Routes>

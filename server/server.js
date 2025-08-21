@@ -16,6 +16,11 @@ const app = express();
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
 
+app.use(cors({
+  origin: 'http://localhost:3000', //тут короче домен на котором фронт будет
+  credentials: true
+}));
+
 // Подключение к PostgreSQL
 const pool = new Pool({
   user: process.env.DB_USER,
