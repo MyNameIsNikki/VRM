@@ -14,6 +14,15 @@ const ShopPage = ({ items, addToCart }) => {
   const [selectedQualities, setSelectedQualities] = useState([]);
   const [selectedHolds, setSelectedHolds] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [openedCategories, setOpenedCategories] = useState({
+    price: true,
+    type: false,
+    hero: false,
+    slot: false,
+    rarity: false,
+    quality: false,
+    hold: false
+  });
 
   const toggleFilter = (filterType, value) => {
     switch (filterType) {
@@ -52,6 +61,13 @@ const ShopPage = ({ items, addToCart }) => {
     }
   };
 
+  const toggleCategory = (category) => {
+    setOpenedCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
+  };
+
   const resetFilters = () => {
     setPriceRange({ min: '', max: '' });
     setSelectedTypes([]);
@@ -60,11 +76,21 @@ const ShopPage = ({ items, addToCart }) => {
     setSelectedRarities([]);
     setSelectedQualities([]);
     setSelectedHolds([]);
+    setSearchQuery('');
   };
 
+  // Получаем уникальные значения для каждого фильтра из items
+  const unique = (array) => Array.from(new Set(array));
+
   const filteredItems = items.filter(item => {
-    if (priceRange.min && item.price < parseFloat(priceRange.min)) return false;
-    if (priceRange.max && item.price > parseFloat(priceRange.max)) return false;
+    // Фильтрация по цене
+    const minPrice = parseFloat(priceRange.min);
+    const maxPrice = parseFloat(priceRange.max);
+    
+    if (!isNaN(minPrice) && item.price < minPrice) return false;
+    if (!isNaN(maxPrice) && item.price > maxPrice) return false;
+    
+    // Остальные фильтры
     if (selectedTypes.length > 0 && !selectedTypes.includes(item.type)) return false;
     if (selectedHeroes.length > 0 && !selectedHeroes.includes(item.hero)) return false;
     if (selectedSlots.length > 0 && !selectedSlots.includes(item.slot)) return false;
@@ -72,8 +98,21 @@ const ShopPage = ({ items, addToCart }) => {
     if (selectedQualities.length > 0 && !selectedQualities.includes(item.quality)) return false;
     if (selectedHolds.length > 0 && !selectedHolds.includes(item.hold)) return false;
     if (searchQuery && !item.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    
     return true;
   });
+
+  // Проверяем, применены ли какие-либо фильтры
+  const areFiltersApplied = () => {
+    return priceRange.min || priceRange.max || 
+           selectedTypes.length > 0 || 
+           selectedHeroes.length > 0 || 
+           selectedSlots.length > 0 || 
+           selectedRarities.length > 0 || 
+           selectedQualities.length > 0 || 
+           selectedHolds.length > 0 || 
+           searchQuery;
+  };
 
   return (
     <div className="content-container">
@@ -88,48 +127,65 @@ const ShopPage = ({ items, addToCart }) => {
         
         {filtersActive && (
           <div className="filter-categories">
-            <PriceFilter priceRange={priceRange} setPriceRange={setPriceRange} />
+            <PriceFilter 
+              priceRange={priceRange} 
+              setPriceRange={setPriceRange}
+              isOpen={openedCategories.price}
+              toggleCategory={() => toggleCategory('price')}
+            />
             
             <CategoryFilter 
               title="Тип"
-              items={['Билет', 'Украшение']}
+              items={unique(items.map(item => item.type))}
               selectedItems={selectedTypes}
               toggleItem={(value) => toggleFilter('type', value)}
+              isOpen={openedCategories.type}
+              toggleCategory={() => toggleCategory('type')}
             />
             
             <CategoryFilter 
               title="Герой"
-              items={['Pudge', 'Phantom Assassin', 'Shadow Fiend', 'Anti-Mage']}
+              items={unique(items.map(item => item.hero))}
               selectedItems={selectedHeroes}
               toggleItem={(value) => toggleFilter('hero', value)}
+              isOpen={openedCategories.hero}
+              toggleCategory={() => toggleCategory('hero')}
             />
             
             <CategoryFilter 
               title="Слот"
-              items={['Оружие', 'Плечо', 'Спина', 'Голова']}
+              items={unique(items.map(item => item.slot))}
               selectedItems={selectedSlots}
               toggleItem={(value) => toggleFilter('slot', value)}
+              isOpen={openedCategories.slot}
+              toggleCategory={() => toggleCategory('slot')}
             />
             
             <CategoryFilter 
               title="Раритетность"
-              items={['Immortal']}
+              items={unique(items.map(item => item.rarity))}
               selectedItems={selectedRarities}
               toggleItem={(value) => toggleFilter('rarity', value)}
+              isOpen={openedCategories.rarity}
+              toggleCategory={() => toggleCategory('rarity')}
             />
             
             <CategoryFilter 
               title="Качество"
-              items={['Standard', 'Exalted', 'Golden']}
+              items={unique(items.map(item => item.quality))}
               selectedItems={selectedQualities}
               toggleItem={(value) => toggleFilter('quality', value)}
+              isOpen={openedCategories.quality}
+              toggleCategory={() => toggleCategory('quality')}
             />
             
             <CategoryFilter 
               title="Холд"
-              items={['Без холда', '7 дней']}
+              items={unique(items.map(item => item.hold))}
               selectedItems={selectedHolds}
               toggleItem={(value) => toggleFilter('hold', value)}
+              isOpen={openedCategories.hold}
+              toggleCategory={() => toggleCategory('hold')}
             />
             
             <button className="reset-filters" onClick={resetFilters}>Сбросить фильтры</button>
@@ -151,11 +207,34 @@ const ShopPage = ({ items, addToCart }) => {
           </div>
         </div>
         
-        <div className="items-grid">
-          {filteredItems.map((item) => (
-            <ItemCard key={item.id} item={item} addToCart={addToCart} />
-          ))}
-        </div>
+        {filteredItems.length > 0 ? (
+          <div className="items-grid">
+            {filteredItems.map((item) => (
+              <ItemCard key={item.id} item={item} addToCart={addToCart} />
+            ))}
+          </div>
+        ) : (
+          <div className="no-items-container">
+            <div className="no-items-message">
+              {areFiltersApplied() ? (
+                <>
+                  <i className="fas fa-search fa-3x"></i>
+                  <h3>Ничего не найдено</h3>
+                  <p>Попробуйте изменить параметры фильтрации или сбросить фильтры</p>
+                  <button className="reset-filters-btn" onClick={resetFilters}>
+                    Сбросить фильтры
+                  </button>
+                </>
+              ) : (
+                <>
+                  <i className="fas fa-box-open fa-3x"></i>
+                  <h3>Товары отсутствуют</h3>
+                  <p>В данный момент в магазине нет доступных товаров</p>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,85 +1,90 @@
-/* Импорт шрифта Roboto с различными начертаниями из Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 
-/* Сброс стандартных отступов и границ для всех элементов */
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box; /* Учет границ в общей ширине/высоте элементов */
+    box-sizing: border-box;
 }
 
-/* Стилизация тела документа */
 body {
-    font-family: 'Roboto', sans-serif; /* Основной шрифт */
-    background: linear-gradient(135deg, #1a1a1a, #2c0b0b); /* Темный градиентный фон */
-    color: #ffffff; /* Белый текст */
-    min-height: 100vh; /* Минимальная высота на весь экран */
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #2a1a1a, #1f0e0e);
+    color: #ffffff;
+    min-height: 100vh;
     display: flex;
-    flex-direction: column; /* Вертикальное расположение элементов */
-    overflow-x: hidden; /* Скрытие горизонтального скролла */
+    flex-direction: column;
+    overflow-x: hidden;
 }
 
-/* Основной контейнер приложения */
 .app {
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Растягивание на всю высоту окна */
-    padding-top: 60px; /* Отступ сверху для фиксированной навигации */
+    min-height: 100vh;
+    padding-top: 60px;
 }
 
-/* Общий контейнер для контента */
 .container {
     max-width: 100%;
-    margin: 0 auto; /* Центрирование */
-    padding: 0 15px; /* Горизонтальные отступы */
+    margin: 0 auto;
+    padding: 0 15px;
     width: 100%;
 }
 
-/* Класс для элементов на всю ширину */
 .full-width {
     width: 100%;
-    padding: 20px 0; /* Вертикальные отступы */
+    padding: 20px 0;
 }
 
-/* Стилизация подвала (футера) */
 footer {
     text-align: center;
     font-size: 14px;
-    color: #d8b6b6; /* Светло-красный текст */
+    color: #d8b6b6;
     padding: 25px 0;
-    border-top: 1px solid #5a0000; /* Верхняя граница */
-    margin-top: auto; /* Прижимание к низу */
-    background: linear-gradient(to right, #1a0000, #330000); /* Градиентный фон */
-    box-shadow: 0 -2px 10px rgba(90, 0, 0, 0.2); /* Тень сверху */
+    border-top: 1px solid #5a0000;
+    margin-top: auto;
+    background: linear-gradient(to right, #2a1a1a, #1f0e0e);
+    box-shadow: 0 -2px 10px rgba(90, 0, 0, 0.2);
 }
 
-/* Стилизация кнопки покупки */
 .buy-button {
-    padding: 10px 15px;
-    background: linear-gradient(to right, #cc0000, #990000); /* Красный градиент */
-    border: none;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px; /* Расстояние между элементами */
-    transition: all 0.3s; /* Плавные переходы */
-    height: 40px;
-    min-width: 130px;
-    font-weight: 600;
-    text-transform: uppercase; /* Заглавные буквы */
-    font-size: 13px;
-    flex-shrink: 0; /* Запрет на сжатие */
-    letter-spacing: 0.8px; /* Разрядка букв */
-    white-space: nowrap; /* Запрет переноса текста */
-    box-shadow: 0 3px 8px rgba(204, 0, 0, 0.3); /* Тень */
-    position: relative;
-    overflow: hidden;
+  
+  padding: 10px 15px;
+  background: linear-gradient(to right, #cc0000, #990000);
+  border: none;
+  border-radius: 3px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.3s;
+  height: 40px;
+  min-width: 130px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  flex-shrink: 0;
+  letter-spacing: 0.8px;
+  white-space: nowrap;
+  box-shadow: 0 3px 8px rgba(204, 0, 0, 0.3);
+  
+  
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align: center;
 }
 
-/* Эффект блеска при наведении на кнопку */
+
+.buy-button span {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
 .buy-button::before {
     content: "";
     position: absolute;
@@ -91,34 +96,30 @@ footer {
     transition: 0.5s;
 }
 
-/* Анимация эффекта блеска */
 .buy-button:hover::before {
     left: 100%;
 }
 
-/* Эффекты при наведении на кнопку */
 .buy-button:hover {
-    background: linear-gradient(to right, #ff3333, #cc0000); /* Более светлый градиент */
-    box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4); /* Усиленная тень */
-    transform: translateY(-3px); /* Поднятие кнопки */
+    background: linear-gradient(to right, #ff3333, #cc0000);
+    box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
+    transform: translateY(-3px);
 }
 
-/* Контейнер для индикатора загрузки */
 .loader-container {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #1a1a1a, #2c0b0b); /* Фон как у body */
+    background: linear-gradient(135deg, #2a1a1a, #1f0e0e);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Поверх других элементов */
-    animation: hideLoader 0.5s 3s forwards; /* Автоматическое скрытие через 3 секунды */
+    z-index: 1000;
+    animation: hideLoader 0.5s 3s forwards;
 }
 
-/* Контейнер для логотипа в загрузчике */
 .logo-loader {
     width: 300px;
     height: 200px;
@@ -127,7 +128,6 @@ footer {
     align-items: center;
 }
 
-/* Стилизация логотипа */
 .logo {
     width: 100%;
     height: 100%;
@@ -135,85 +135,109 @@ footer {
     background-repeat: no-repeat;
     background-position: center;
     animation: 
-        smoothAppear 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), /* Плавное появление */
-        gentleGlow 1.5s ease-in-out 2.5s infinite; /* Бесконечное свечение после появления */
+        smoothAppear 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        gentleGlow 1.5s ease-in-out 2.5s infinite;
 }
 
-/* Анимация плавного появления */
+/* Добавим в конец файла */
+
+.sensitive-data {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  letter-spacing: 1px;
+}
+
+/* Стили для защиты от скриншотов */
+@media (max-width: 768px) {
+  .sensitive-data {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
+
+/* Запрет копирования для чувствительных данных */
+.no-copy {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 @keyframes smoothAppear {
     0% { 
         opacity: 0;
-        transform: scale(0.95); /* Начальный масштаб */
+        transform: scale(0.95);
     }
     100% { 
         opacity: 1;
-        transform: scale(1); /* Конечный масштаб */
+        transform: scale(1);
     }
 }
 
-/* Анимация мягкого свечения */
 @keyframes gentleGlow {
     0%, 100% { 
-        filter: brightness(1); /* Нормальная яркость */
+        filter: brightness(1);
     }
     50% { 
-        filter: brightness(1.15); /* Увеличенная яркость */
+        filter: brightness(1.15);
     }
 }
 
-/* Анимация скрытия загрузчика */
 @keyframes hideLoader {
     to { 
         opacity: 0;
-        visibility: hidden; /* Полное скрытие элемента */
+        visibility: hidden;
     }
 }
 
-/* Адаптивные стили для устройств с шириной до 768px */
 @media (max-width: 768px) {
     .app {
-        padding-top: 80px; /* Увеличенный отступ для навигации */
+        padding-top: 80px;
     }
     
     .navbar {
-        height: 80px; /* Увеличенная высота навигации */
+        height: 80px;
     }
     
     .nav-container {
-        flex-direction: column; /* Вертикальное расположение элементов */
+        flex-direction: column;
         padding: 10px;
     }
     .logo {
-        margin: 0 0 15px 0; /* Отступ снизу для логотипа */
+        margin: 0 0 15px 0;
     }
     .nav-links {
-        flex-wrap: wrap; /* Перенос элементов на новую строку */
-        justify-content: center; /* Центрирование */
-        gap: 10px; /* Расстояние между элементами */
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
     }
     .benefits {
-        flex-direction: column; /* Вертикальное расположение */
-        gap: 15px; /* Расстояние между элементами */
+        flex-direction: column;
+        gap: 15px;
     }
 }
 
-/* Адаптивные стили для устройств с шириной до 576px (мобильные) */
 @media (max-width: 576px) {
     .items-grid {
-        grid-template-columns: 1fr; /* Одна колонка в сетке */
+        grid-template-columns: 1fr;
     }
     .title-block {
-        font-size: 24px; /* Уменьшенный размер шрифта */
-        padding: 25px 5px; /* Измененные отступы */
+        font-size: 24px;
+        padding: 25px 5px;
     }
     .offer-actions {
-        flex-direction: column; /* Вертикальное расположение */
-        gap: 5px; /* Расстояние между элементами */
+        flex-direction: column;
+        gap: 5px;
     }
     .offer-seller {
         margin-left: 0;
-        justify-content: flex-end; /* Выравнивание по правому краю */
-        width: 100%; /* Полная ширина */
+        justify-content: flex-end;
+        width: 100%;
     }
     .title-block {
         padding: 25px 5px;
@@ -221,6 +245,6 @@ footer {
     }
     
     .container {
-        padding: 0 10px; /* Уменьшенные горизонтальные отступы */
+        padding: 0 10px;
     }
 }

@@ -3,10 +3,210 @@
     color: #ffffff;
     font-size: 32px;
     text-transform: uppercase;
-    padding: 25px 5px; /* Уменьшен padding */
-    background: linear-gradient(to right, #1a0000, #570000);
+    padding: 25px 5px;
+    background: linear-gradient(to right, #2b0202, #570000);
     letter-spacing: 2px;
     text-shadow: 0 2px 8px rgba(0,0,0,0.4);
     border-bottom: 1px solid #5a0000;
     margin-top: 0;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+
+.homepage-hero {
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                url('https://example.com/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 80px 20px;
+    text-align: center;
+    margin: 40px 0;
+}
+
+.hero-content h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.hero-content p {
+    font-size: 24px;
+    color: #d4b0b0;
+    margin-bottom: 40px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-top: 40px;
+}
+
+.hero-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hero-stat-value {
+    font-size: 48px;
+    font-weight: bold;
+    color: #ff9999;
+    margin-bottom: 10px;
+}
+
+.hero-stat-label {
+    font-size: 18px;
+    color: #d4b0b0;
+    text-transform: uppercase;
+}
+
+.features-section {
+    max-width: 1400px;
+    margin: 80px auto;
+    padding: 0 20px;
+}
+
+.features-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.feature {
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(145deg, #2a1a1a, #1f0e0e);
+    border-radius: 10px;
+    border: 2px solid #5a0000;
+    transition: transform 0.3s;
+}
+
+.feature:hover {
+    transform: translateY(-10px);
+}
+
+.feature-icon {
+    font-size: 48px;
+    color: #cc4d4d;
+    margin-bottom: 20px;
+}
+
+.feature h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.feature p {
+    color: #d4b0b0;
+    line-height: 1.6;
+}
+
+.recently-sold-section {
+    max-width: 1400px;
+    margin: 80px auto;
+    padding: 0 20px;
+}
+
+.section-title {
+    color: #fff;
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.recently-sold-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding: 20px;
+    background: linear-gradient(145deg,#2a1a1a, #1f0e0e);
+    border: 2px solid #5a0000;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.sold-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 150px;
+    background: rgba(90, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 20px;
+    transition: transform 0.3s;
+    height: 150px;
+    justify-content: space-between;
+}
+
+.sold-item:hover {
+    transform: translateY(-3px);
+    background: rgba(120, 0, 0, 0.3);
+}
+
+.sold-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 15px;
+}
+
+.sold-item-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+}
+
+.sold-item-name {
+    font-size: 14px;
+    color: #ff9999;
+    margin-bottom: 5px;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sold-item-price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #66ff99;
+}
+
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 36px;
+    }
+    
+    .hero-content p {
+        font-size: 18px;
+    }
+    
+    .hero-stats {
+        flex-direction: column;
+        gap: 30px;
+    }
+    
+    .features-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .feature {
+        padding: 30px 15px;
+    }
 }

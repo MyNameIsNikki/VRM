@@ -5,7 +5,7 @@ import './ItemDetailPage.css';
 const ItemDetailPage = ({ items, addToCart }) => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const item = items.find((i) => i.id_item === parseInt(id));
+  const item = items.find((i) => i.id === parseInt(id));
 
   if (!item) {
     return (
@@ -26,7 +26,7 @@ const ItemDetailPage = ({ items, addToCart }) => {
         <div className="item-image">
   <img 
     src={item.image} 
-    alt={item.nazvanie} 
+    alt={item.name} 
     className="item-img"
     onError={(e) => {
       e.target.onerror = null; 

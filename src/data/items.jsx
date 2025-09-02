@@ -90,7 +90,7 @@ const items = [
       { price: 3128.90, seller: 'ShadowKing' }
     ]
   },
- {
+  {
     id: 5,
     name: "Golden Basher Blades",
     price: 847.87,

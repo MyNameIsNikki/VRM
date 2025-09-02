@@ -139,7 +139,7 @@ textarea.form-control {
 }
 
 .link-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(98, 13, 13, 0.05);
   border-radius: 8px;
   padding: 20px;
   transition: all 0.3s;
@@ -286,7 +286,6 @@ textarea.form-control {
   }
 }
 
-/* Адаптивность */
 @media (max-width: 768px) {
   .help-container {
     padding: 0 15px;

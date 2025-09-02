@@ -6,3 +6,60 @@
     color: #999;
     font-size: 12px;
 }
+
+.filter-input {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.filter-input__input {
+    width: 100%;
+    padding: 8px 30px 8px 10px;
+    background: rgba(30, 30, 30, 0.8);
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: white;
+    box-sizing: border-box;
+}
+
+.filter-input__icon-clear {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    cursor: pointer;
+    display: block;
+    font-size: 12px;
+}
+
+.filter-input__title {
+    position: absolute;
+    top: -20px;
+    left: 0;
+    font-size: 12px;
+    color: #aaa;
+    display: none;
+}
+
+.filter-input:focus-within .filter-input__title {
+    display: block;
+}
+
+.grouped-input {
+    display: flex;
+    gap: 10px;
+}
+
+.grouped-input--two-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.filter-category.opened .category-content {
+    display: block;
+}
+
+.category-content {
+    display: none;
+}

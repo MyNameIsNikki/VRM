@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-//import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header/Header';
 import AuthModal from '../components/modals/AuthModal';
 import InfoModal from '../components/modals/InfoModal';
@@ -9,7 +8,6 @@ import TermsModal from '../components/modals/TermsModal';
 import SecurityPolicyModal from '../components/modals/SecurityPolicyModal';
 import TradeRulesModal from '../components/modals/TradeRulesModal';
 import './HelpPage.css';
-import { orderService } from '../services/orderService';
 
 const HelpPage = ({ 
   cart, 
@@ -19,7 +17,6 @@ const HelpPage = ({
   openModal, 
   setCartModalIsOpen 
 }) => {
-  //const navigate = useNavigate();
   const [activeFaq, setActiveFaq] = useState(null);
   const [contactForm, setContactForm] = useState({
     email: '',
@@ -51,7 +48,6 @@ const HelpPage = ({
       [name]: value
     }));
   };
-  
 
   const handleSubmit = (e) => {
     e.preventDefault();

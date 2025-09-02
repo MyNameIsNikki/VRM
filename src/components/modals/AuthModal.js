@@ -1,7 +1,6 @@
-// src/components/modals/AuthModal.jsx
-
 import React, { useState, useEffect } from 'react';
 import './AuthModal.css';
+import { sanitizeInput } from '../utils/security';
 
 const AuthModal = ({ isOpen, onClose, onLoginSuccess, onSwitchToRegister }) => {
   const [username, setUsername] = useState('');
@@ -11,7 +10,6 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, onSwitchToRegister }) => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Загрузка сохраненного имени пользователя при монтировании
   useEffect(() => {
     const savedUsername = localStorage.getItem('login_username');
     const savedRemember = localStorage.getItem('login_remember');
@@ -22,7 +20,6 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, onSwitchToRegister }) => {
     }
   }, []);
 
-  // Обработка нажатия клавиши Escape для закрытия модального окна
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape' && isOpen) {
@@ -39,8 +36,12 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, onSwitchToRegister }) => {
     setError('');
     setIsLoading(true);
 
+    // Санитизация ввода
+    const sanitizedUsername = sanitizeInput(username);
+    const sanitizedPassword = sanitizeInput(password);
+
     // Простая валидация
-    if (!username || !password) {
+    if (!sanitizedUsername || !sanitizedPassword) {
       setError('Введите имя пользователя и пароль.');
       setIsLoading(false);
       return;
@@ -51,17 +52,20 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, onSwitchToRegister }) => {
       await new Promise(resolve => setTimeout(resolve, 900));
       
       // Фиктивная авторизация: username 'user' password '1234'
-      if (username === 'user' && password === '1234') {
+      if (sanitizedUsername === 'user' && sanitizedPassword === '1234') {
         if (rememberMe) {
-          localStorage.setItem('login_username', username);
+          localStorage.setItem('login_username', sanitizedUsername);
           localStorage.setItem('login_remember', 'true');
         } else {
           localStorage.removeItem('login_username');
           localStorage.setItem('login_remember', 'false');
         }
         
+        // Генерируем простой токен (в реальном приложении это должен быть JWT от сервера)
+        const token = 'demo-auth-token-' + Math.random().toString(36).substr(2);
+        
         if (onLoginSuccess) {
-          onLoginSuccess();
+          onLoginSuccess(token);
         }
         
         onClose();
@@ -163,12 +167,12 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, onSwitchToRegister }) => {
                 {showPassword ? (
                   <>
                     <path d="M3 12s4-6 9-6 9 6 9 6-4 6-9 6-9-6-9-6z" stroke="rgba(255,255,255,0.9)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke="rgba(255,255,255,0.9)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke="rgba(255,255,255,0.9)" strokeWidth='1.4' strokeLinecap="round" strokeLinejoin="round"/>
                   </>
                 ) : (
                   <>
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="rgba(255,255,255,0.9)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                    <line x1="1" y1="1" x2="23" y2="23" stroke="rgba(255,255,255,0.9)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="rgba(255,255,255,0.9)" strokeWidth='1.4' strokeLinecap="round" strokeLinejoin="round"/>
+                    <line x1="1" y1="1" x2="23" y2="23" stroke="rgba(255,255,255,0.9)" strokeWidth='1.4' strokeLinecap="round" strokeLinejoin="round"/>
                   </>
                 )}
               </svg>

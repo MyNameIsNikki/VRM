@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
 import Header from './components/Header/Header';
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
 import ItemDetailPage from './pages/ItemDetailPage';
 import HelpPage from './pages/HelpPage';
+import CartModal from './components/modals/CartModal';
 import InfoModal from './components/modals/InfoModal';
-import AuthModal from './components/modals/AuthModal';
-import { authService } from './services/authService';
-import { itemService } from './services/itemService';
+import items from './data/items';
 import vrmLogo from './assets/VRM.png';
+import exaltedFeast from './assets/Exalted Feast of Abscession - Back.svg';
+import goldencrucibleofrile from './assets/Golden Crucible of Rile.svg';
+import headoftheodobenusone from './assets/Head of the Odobenus One.svg';
+import { secureStorage } from './components/utils/secureStorage';
 
 Modal.setAppElement('#root');
 
@@ -20,18 +23,76 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [modalIsOpen, setModalIsOpen] = useState({ type: null });
-  const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
-  const [registerModalIsOpen, setRegisterModalIsOpen] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState(0);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loginErrors, setLoginErrors] = useState({});
-  const [registerErrors, setRegisterErrors] = useState({});
-  const [items, setItems] = useState([]);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [cartModalIsOpen, setCartModalIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+  
+  const [recentlySold, setRecentlySold] = useState([
+    { id: 1, name: "Exalted Feast of Abscession - Back", price: 39.72, image: exaltedFeast },
+    { id: 2, name: "Golden Crucible of Rile", price: 39.56, image: goldencrucibleofrile },
+    { id: 3, name: "Head of the Odobenus One", price: 12.92, image: headoftheodobenusone },
+  ]);
+  
+  const [statsData, setStatsData] = useState({
+    totalSold: "3",
+    totalReviews: "1",
+    averageRating: "4.8"
+  });
 
+  // Функция для обновления токенов
+  const refreshTokenIfNeeded = () => {
+    const token = secureStorage.getItem('authToken');
+    const loginTime = secureStorage.getItem('loginTime');
+    const currentTime = new Date().getTime();
+    
+    // Обновляем токен если осталось меньше 4 часов
+    if (token && loginTime && (currentTime - parseInt(loginTime)) > 20 * 60 * 60 * 1000) {
+      const newToken = 'demo-auth-token-' + Math.random().toString(36).substr(2);
+      secureStorage.setItem('authToken', newToken);
+      secureStorage.setItem('loginTime', new Date().getTime());
+    }
+  };
+
+  // Проверка авторизации при загрузке
   useEffect(() => {
+    const checkAuthStatus = () => {
+      const token = secureStorage.getItem('authToken');
+      const loginTime = secureStorage.getItem('loginTime');
+      const currentTime = new Date().getTime();
+      
+      // Если токен существует и не истек срок (24 часа)
+      if (token && loginTime && (currentTime - parseInt(loginTime)) < 24 * 60 * 60 * 1000) {
+        setIsLoggedIn(true);
+      } else {
+        // Очищаем устаревшие данные
+        secureStorage.removeItem('authToken');
+        secureStorage.removeItem('loginTime');
+        secureStorage.removeItem('login_username');
+        secureStorage.removeItem('login_remember');
+        setIsLoggedIn(false);
+      }
+      refreshTokenIfNeeded();
+    };
+
+    checkAuthStatus();
+
+    // Добавим базовые настройки безопасности
+    const metaCharset = document.createElement('meta');
+    metaCharset.setAttribute('charset', 'UTF-8');
+    document.head.appendChild(metaCharset);
+    
+    const metaViewport = document.createElement('meta');
+    metaViewport.setAttribute('name', 'viewport');
+    metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+    metaViewport.setAttribute('http-equiv', 'Content-Security-Policy', "default-src 'self'");
+    document.head.appendChild(metaViewport);
+    
+    // Добавляем CSP meta tag
+    const cspMeta = document.createElement('meta');
+    cspMeta.setAttribute('http-equiv', 'Content-Security-Policy');
+    cspMeta.setAttribute('content', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:");
+    document.head.appendChild(cspMeta);
+
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
@@ -46,43 +107,30 @@ function App() {
     showTime();
     const interval = setInterval(showTime, 1000);
 
-    // Проверка аутентификации
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    if (token && user) {
-      setIsAuthenticated(true);
-      setCurrentUser(JSON.parse(user));
-    }
-
-    // Загрузка товаров
-    loadItems();
+    // Периодическая проверка авторизации каждые 10 минут
+    const authCheckInterval = setInterval(checkAuthStatus, 10 * 60 * 1000);
 
     return () => {
       clearTimeout(timer);
       clearInterval(interval);
+      clearInterval(authCheckInterval);
     };
   }, []);
 
-  const loadItems = async () => {
-    try {
-      const response = await itemService.getAll();
-      setItems(response.data);
-    } catch (error) {
-      console.error('Ошибка загрузки товаров:', error);
-    }
+  // Функция для входа пользователя
+  const handleLogin = (token) => {
+    secureStorage.setItem('authToken', token);
+    secureStorage.setItem('loginTime', new Date().getTime());
+    setIsLoggedIn(true);
   };
 
-  const handleLogin = (userData, token) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(userData));
-    setIsAuthenticated(true);
-    setCurrentUser(userData);
-  };
-
+  // Функция для выхода пользователя
   const handleLogout = () => {
-    authService.logout();
-    setIsAuthenticated(false);
-    setCurrentUser(null);
+    secureStorage.removeItem('authToken');
+    secureStorage.removeItem('loginTime');
+    setIsLoggedIn(false);
+    setCart([]);
+    navigate('/');
   };
 
   const handleSearchChange = (e) => {
@@ -90,7 +138,7 @@ function App() {
   };
 
   const filteredItems = items.filter((item) =>
-    item.nazvanie.toLowerCase().includes(searchQuery.toLowerCase())
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const addToCart = (item) => {
@@ -98,11 +146,11 @@ function App() {
   };
 
   const removeFromCart = (itemId) => {
-    setCart(cart.filter((item) => item.id_item !== itemId));
+    setCart(cart.filter((item) => item.id !== itemId));
   };
 
   const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + parseFloat(item.price), 0).toFixed(2);
+    return cart.reduce((total, item) => total + item.price, 0).toFixed(2);
   };
 
   const openModal = (type) => {
@@ -111,102 +159,6 @@ function App() {
 
   const closeModal = () => {
     setModalIsOpen({ type: null });
-    setLoginModalIsOpen(false);
-    setRegisterModalIsOpen(false);
-    setLoginErrors({});
-    setRegisterErrors({});
-  };
-
-  const handlePasswordChange = (e) => {
-    const value = e.target.value;
-    let strength = 0;
-    if (value.length >= 8) strength += 25;
-    if (/[A-Z]/.test(value)) strength += 25;
-    if (/[0-9]/.test(value)) strength += 25;
-    if (/[^A-Za-z0-9]/.test(value)) strength += 25;
-    setPasswordStrength(strength);
-  };
-
-  const handleSteamLogin = () => {
-    alert('Логин через Steam (заглушка: реализуйте API Steam)');
-    closeModal();
-  };
-
-  const handleGoogleLogin = () => {
-    alert('Логин через Google (заглушка: реализуйте API Google)');
-    closeModal();
-  };
-
-  const handleEmailLogin = async (e) => {
-    e.preventDefault();
-    const email = e.target.email.value;
-    const password = e.target.password.value;
-    const errors = {};
-    
-    if (!email.trim()) errors.email = "Пожалуйста, введите email";
-    if (!password.trim()) errors.password = "Пожалуйста, введите пароль";
-    
-    if (Object.keys(errors).length > 0) {
-      setLoginErrors(errors);
-      return;
-    }
-    
-    try {
-      const response = await authService.login({ login: email, password });
-      const { token, user } = response.data;
-      handleLogin(user, token);
-      closeModal();
-    } catch (error) {
-      setLoginErrors({ general: 'Ошибка входа: проверьте данные' });
-    }
-  };
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    const username = e.target.username.value;
-    const email = e.target.email.value;
-    const password = e.target.password.value;
-    const confirmPassword = e.target.confirmPassword.value;
-    const acceptTerms = e.target.acceptTerms.checked;
-    const errors = {};
-    
-    if (!username.trim() || username.length < 3 || username.length > 20) {
-      errors.username = "Имя пользователя должно содержать от 3 до 20 символов";
-    }
-    
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.email = "Пожалуйста, введите корректный email";
-    }
-    
-    if (password.length < 8) {
-      errors.password = "Пароль должен содержать минимум 8 символов";
-    }
-    
-    if (password !== confirmPassword) {
-      errors.confirmPassword = "Пароли не совпадают";
-    }
-    
-    if (!acceptTerms) {
-      errors.terms = "Необходимо принять условия использования";
-    }
-    
-    if (Object.keys(errors).length > 0) {
-      setRegisterErrors(errors);
-      return;
-    }
-    
-    try {
-      const response = await authService.register({
-        login: username,
-        password,
-        link: email
-      });
-      const { token, user } = response.data;
-      handleLogin(user, token);
-      closeModal();
-    } catch (error) {
-      setRegisterErrors({ general: 'Ошибка регистрации' });
-    }
   };
 
   if (isLoading) {
@@ -224,10 +176,11 @@ function App() {
     <div className="app">
       <Header 
         openModal={openModal}
+        setCartModalIsOpen={setCartModalIsOpen}
         cart={cart}
-        isAuthenticated={isAuthenticated}
-        currentUser={currentUser}
-        handleLogout={handleLogout}
+        isLoggedIn={isLoggedIn}
+        onLogout={handleLogout}
+        onLogin={handleLogin}
       />
       
       <Routes>
@@ -238,19 +191,64 @@ function App() {
             handleSearchChange={handleSearchChange}
             searchQuery={searchQuery}
             openModal={openModal}
+            recentlySold={recentlySold}
+            statsData={statsData}
+            isLoggedIn={isLoggedIn}
           />
         } />
         <Route path="/shop" element={
-          <ShopPage 
-            items={items} 
-            addToCart={addToCart} 
-          />
+          isLoggedIn ? (
+            <ShopPage 
+              items={items} 
+              addToCart={addToCart} 
+            />
+          ) : (
+            <div style={{ padding: '50px', textAlign: 'center', color: 'white' }}>
+              <h2>Доступ запрещен</h2>
+              <p>Для доступа к магазину необходимо авторизоваться</p>
+              <button 
+                onClick={() => openModal('login')}
+                style={{
+                  padding: '10px 20px',
+                  background: 'linear-gradient(to right, #cc0000, #990000)',
+                  border: 'none',
+                  borderRadius: '5px',
+                  color: 'white',
+                  cursor: 'pointer',
+                  marginTop: '20px'
+                }}
+              >
+                Войти
+              </button>
+            </div>
+          )
         } />
         <Route path="/item/:id" element={
-          <ItemDetailPage 
-            items={items} 
-            addToCart={addToCart} 
-          />
+          isLoggedIn ? (
+            <ItemDetailPage 
+              items={items} 
+              addToCart={addToCart} 
+            />
+          ) : (
+            <div style={{ padding: '50px', textAlign: 'center', color: 'white' }}>
+              <h2>Доступ запрещен</h2>
+              <p>Для доступа к странице товара необходимо авторизоваться</p>
+              <button 
+                onClick={() => openModal('login')}
+                style={{
+                  padding: '10px 20px',
+                  background: 'linear-gradient(to right, #cc0000, #990000)',
+                  border: 'none',
+                  borderRadius: '5px',
+                  color: 'white',
+                  cursor: 'pointer',
+                  marginTop: '20px'
+                }}
+              >
+                Войти
+              </button>
+            </div>
+          )
         } />
         <Route path="/help" element={
           <HelpPage 
@@ -259,6 +257,7 @@ function App() {
             removeFromCart={removeFromCart}
             getTotalPrice={getTotalPrice}
             openModal={openModal}
+            isLoggedIn={isLoggedIn}
           />
         } />
       </Routes>
@@ -273,24 +272,12 @@ function App() {
         type={modalIsOpen.type}
       />
       
-      <AuthModal 
-        loginModalIsOpen={loginModalIsOpen}
-        registerModalIsOpen={registerModalIsOpen}
-        onRequestClose={closeModal}
-        handlePasswordChange={handlePasswordChange}
-        passwordStrength={passwordStrength}
-        showPassword={showPassword}
-        setShowPassword={setShowPassword}
-        showConfirmPassword={showConfirmPassword}
-        setShowConfirmPassword={setShowConfirmPassword}
-        loginErrors={loginErrors}
-        registerErrors={registerErrors}
-        handleSteamLogin={handleSteamLogin}
-        handleGoogleLogin={handleGoogleLogin}
-        handleEmailLogin={handleEmailLogin}
-        handleRegister={handleRegister}
-        setLoginModalIsOpen={setLoginModalIsOpen}
-        setRegisterModalIsOpen={setRegisterModalIsOpen}
+      <CartModal 
+        isOpen={cartModalIsOpen}
+        onRequestClose={() => setCartModalIsOpen(false)}
+        cart={cart}
+        removeFromCart={removeFromCart}
+        getTotalPrice={getTotalPrice}
       />
     </div>
   );

@@ -3,7 +3,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: linear-gradient(145deg, #1a0000, #3a0000);
+    background: linear-gradient(145deg, #2a1a1a, #1f0e0e);
     border-radius: 12px;
     padding: 30px;
     max-width: 600px;
@@ -63,7 +63,7 @@
 }
 
 .auth-header {
-    background: linear-gradient(to right, #2a0a0a, #1a0000);
+    background: linear-gradient(to right, #2a1a1a, #1f0e0e);
     padding: 20px;
     text-align: center;
     position: relative;

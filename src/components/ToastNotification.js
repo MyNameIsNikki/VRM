@@ -1,4 +1,3 @@
-// src/components/ToastNotification/ToastNotification.jsx
 import React from 'react';
 import './ToastNotification.css';
 

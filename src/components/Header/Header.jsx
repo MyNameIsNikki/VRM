@@ -4,27 +4,25 @@ import AuthModal from '../modals/AuthModal';
 import RegisterModal from '../modals/RegisterModal';
 import './Header.css';
 
-const Header = ({ openModal, setCartModalIsOpen, cart }) => {
+const Header = ({ openModal, setCartModalIsOpen, cart, isLoggedIn, onLogout, onLogin }) => {
   const navigate = useNavigate();
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [activeAuthModal, setActiveAuthModal] = useState(null);
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = (token) => {
     console.log('Пользователь успешно вошел');
+    setActiveAuthModal(null);
+    onLogin(token);
   };
 
-  const handleRegisterSuccess = () => {
-    console.log('Пользователь успешно зарегистрирован');
+  const handleRegisterSuccess = (token) => {
+    console.log('Пользователь успешно зарегистрировался');
+    setActiveAuthModal(null);
+    onLogin(token);
   };
 
-  const handleSwitchToLogin = () => {
-    setIsRegisterModalOpen(false);
-    setIsAuthModalOpen(true);
-  };
-
-  const handleSwitchToRegister = () => {
-    setIsAuthModalOpen(false);
-    setIsRegisterModalOpen(true);
+  const handleLogoutClick = () => {
+    onLogout();
+    navigate('/');
   };
 
   return (
@@ -35,44 +33,54 @@ const Header = ({ openModal, setCartModalIsOpen, cart }) => {
             VRM
           </div>
           <div className="nav-links">
-            <button className="nav-link-button" onClick={() => openModal('sell')}>
-              <i className="fas fa-coins"></i> Продать скины
-            </button>
-            <button className="nav-link-button" onClick={() => navigate('/shop')}>
-              <i className="fas fa-shopping-cart"></i> Купить скины
-            </button>
-            <button className="nav-link-button" onClick={() => navigate('/help')}>
-              <i className="fas fa-question-circle"></i> Помощь
-            </button>
-            <button className="nav-link-button" onClick={() => setCartModalIsOpen(true)}>
-              <i className="fas fa-shopping-basket"></i> Корзина
-              {cart.length > 0 && <span className="cart-count">{cart.length}</span>}
-            </button>
-            <button className="nav-link-button" onClick={() => setIsRegisterModalOpen(true)}>
-              <i className="fas fa-user-plus"></i> Регистрация
-            </button>
-            <button className="nav-link-button" onClick={() => setIsAuthModalOpen(true)}>
-              <i className="fas fa-sign-in-alt"></i> Вход
-            </button>
+            {isLoggedIn ? (
+              <>
+                <button className="nav-link-button" onClick={() => openModal('sell')}>
+                  <i className="fas fa-coins"></i> Продать скины
+                </button>
+                <button className="nav-link-button" onClick={() => navigate('/shop')}>
+                  <i className="fas fa-shopping-cart"></i> Купить скины
+                </button>
+                <button className="nav-link-button" onClick={() => navigate('/help')}>
+                  <i className="fas fa-question-circle"></i> Помощь
+                </button>
+                <button className="nav-link-button" onClick={() => setCartModalIsOpen(true)}>
+                  <i className="fas fa-shopping-basket"></i> Корзина
+                  {cart.length > 0 && <span className="cart-count">{cart.length}</span>}
+                </button>
+                <button className="nav-link-button" onClick={handleLogoutClick}>
+                  <i className="fas fa-sign-out-alt"></i> Выход
+                </button>
+              </>
+            ) : (
+              <>
+                <button className="nav-link-button" onClick={() => setActiveAuthModal('login')}>
+                  <i className="fas fa-sign-in-alt"></i> Вход
+                </button>
+                <button className="nav-link-button" onClick={() => setActiveAuthModal('register')}>
+                  <i className="fas fa-user-plus"></i> Регистрация
+                </button>
+              </>
+            )}
           </div>
         </div>
       </nav>
 
       <AuthModal 
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
+        isOpen={activeAuthModal === 'login'}
+        onClose={() => setActiveAuthModal(null)}
         onLoginSuccess={handleLoginSuccess}
-        onSwitchToRegister={handleSwitchToRegister}
+        onSwitchToRegister={() => setActiveAuthModal('register')}
       />
       
-      <RegisterModal 
-        isOpen={isRegisterModalOpen}
-        onClose={() => setIsRegisterModalOpen(false)}
+      <RegisterModal
+        isOpen={activeAuthModal === 'register'}
+        onClose={() => setActiveAuthModal(null)}
         onRegisterSuccess={handleRegisterSuccess}
-        onSwitchToLogin={handleSwitchToLogin}
+        onSwitchToLogin={() => setActiveAuthModal('login')}
       />
     </>
   );
 };
 
-export default Header;
+export default Header;  
