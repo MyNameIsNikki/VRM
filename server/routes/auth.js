@@ -1,11 +1,23 @@
-/*Запуск для проверки из routes node auth.js */
-
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
-const pool = require('../db'); // Added for CLI mode
+const pool = require('../db');
+const winston = require('winston');
+
+// Настройка логгера
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: 'auth.log' })
+  ]
+});
 
 // Валидация регистрации
 const validateRegister = [
@@ -33,40 +45,37 @@ async function logTableInfo(client, tableName) {
     );
     
     const exists = checkRes.rows[0].exists;
-    console.log(`- Таблица "${tableName}": ${exists ? '✓ найдена' : '✗ отсутствует'}`);
+    logger.info(`Таблица "${tableName}": ${exists ? 'найдена' : 'отсутствует'}`);
     
     if (exists) {
       const countRes = await client.query(`SELECT COUNT(*) FROM public.users`);
-      console.log(`  Записей: ${countRes.rows[0].count}`);
+      logger.info(`Записей в таблице "${tableName}": ${countRes.rows[0].count}`);
       
       const dataRes = await client.query(`SELECT * FROM public.users ORDER BY id LIMIT 10`);
-      console.log('  Содержимое таблицы:');
+      logger.info('Содержимое таблицы:', { table: tableName });
       if (dataRes.rows.length === 0) {
-        console.log('    Нет данных в таблице.');
+        logger.info('Нет данных в таблице.', { table: tableName });
       } else {
         dataRes.rows.forEach((row, index) => {
-          console.log(`    Запись ${index + 1}:`, JSON.stringify(row));
+          logger.info(`Запись ${index + 1}:`, { table: tableName, row });
         });
         if (countRes.rows[0].count > 10) {
-          console.log(`    ...и еще ${countRes.rows[0].count - 10} записей`);
+          logger.info(`...и еще ${countRes.rows[0].count - 10} записей`, { table: tableName });
         }
       }
     } else {
       const tablesRes = await client.query(
         `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'`
       );
-      console.log('  Доступные таблицы в схеме public:', tablesRes.rows.map(row => row.table_name).join(', ') || 'нет таблиц');
+      logger.info('Доступные таблицы в схеме public:', {
+        tables: tablesRes.rows.map(row => row.table_name).join(', ') || 'нет таблиц'
+      });
     }
   } catch (tableError) {
-    console.error(`  Ошибка проверки таблицы "${tableName}":`, tableError.message);
-    try {
-      const tablesRes = await client.query(
-        `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'`
-      );
-      console.log('  Доступные таблицы в схеме public:', tablesRes.rows.map(row => row.table_name).join(', ') || 'нет таблиц');
-    } catch (diagError) {
-      console.error('  Ошибка при получении списка таблиц:', diagError.message);
-    }
+    logger.error(`Ошибка проверки таблицы "${tableName}"`, {
+      error: tableError.message,
+      stack: tableError.stack
+    });
   }
 }
 
@@ -74,35 +83,101 @@ async function logTableInfo(client, tableName) {
 router.post('/register', validateRegister, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    logger.warn('Валидация регистрации не пройдена', { errors: errors.array() });
     return res.status(400).json({ errors: errors.array() });
   }
 
   const { login, password, link } = req.body;
+  logger.info('Попытка регистрации пользователя', { login });
+
+  let client;
   try {
-    const pool = req.app.locals.pool;
-    const userCheck = await pool.query('SELECT * FROM users WHERE login = $1', [login]);
+    // Проверяем доступность базы данных
+    await pool.query('SELECT 1');
+    
+    client = await pool.connect();
+    
+    // Начинаем транзакцию
+    await client.query('BEGIN');
+
+    // Проверяем существование пользователя
+    const userCheck = await client.query('SELECT * FROM users WHERE login = $1 OR link = $2', [login, link]);
     
     if (userCheck.rows.length > 0) {
-      return res.status(400).json({ error: 'Пользователь с таким логином уже существует' });
+      await client.query('ROLLBACK');
+      const existingUser = userCheck.rows[0];
+      if (existingUser.login === login) {
+        logger.warn('Пользователь с таким логином уже существует', { login });
+        return res.status(400).json({ error: 'Пользователь с таким логином уже существует' });
+      } else {
+        logger.warn('Пользователь с такой ссылкой уже существует', { link });
+        return res.status(400).json({ error: 'Пользователь с такой ссылкой уже существует' });
+      }
     }
 
+    // Хешируем пароль
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await pool.query(
-      'INSERT INTO users (login, password, link) VALUES ($1, $2, $3) RETURNING id, login, link',
+    
+    // Создаем пользователя
+    const newUser = await client.query(
+      'INSERT INTO users (login, password, link, registrationtime) VALUES ($1, $2, $3, CURRENT_DATE) RETURNING id, login, link',
       [login, hashedPassword, link]
     );
 
     const user = newUser.rows[0];
-    await pool.query(
+    
+    // Создаем запись продавца
+    await client.query(
       'INSERT INTO sellers (link, id_polz) VALUES ($1, $2)',
       [user.link, user.id]
     );
 
-    const token = jwt.sign({ id: user.id, login: user.login }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.status(201).json({ token, user });
+    // Коммитим транзакцию
+    await client.query('COMMIT');
+
+    if (!process.env.JWT_SECRET) {
+      logger.error('JWT_SECRET не установлен');
+      return res.status(500).json({ error: 'Ошибка сервера: JWT_SECRET не настроен' });
+    }
+
+    const token = jwt.sign({ id: user.id, login: user.login }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    logger.info('Пользователь успешно зарегистрирован', { userId: user.id, login });
+    
+    res.status(201).json({ 
+      token, 
+      user: {
+        id: user.id,
+        login: user.login,
+        link: user.link
+      } 
+    });
   } catch (error) {
-    console.error('Ошибка регистрации:', error);
+    // Откатываем транзакцию в случае ошибки
+    if (client) {
+      try {
+        await client.query('ROLLBACK');
+      } catch (rollbackError) {
+        logger.error('Ошибка при откате транзакции', { error: rollbackError.message });
+      }
+    }
+    
+    logger.error('Ошибка регистрации', {
+      error: error.message,
+      stack: error.stack,
+      login
+    });
+    
+    if (error.code === '23505') {
+      logger.warn('Нарушение уникальности при регистрации', { login, constraint: error.constraint });
+      return res.status(400).json({ error: 'Логин или ссылка уже используются' });
+    }
+    
     res.status(500).json({ error: 'Ошибка сервера при регистрации' });
+  } finally {
+    // Всегда освобождаем клиента
+    if (client) {
+      client.release();
+    }
   }
 });
 
@@ -110,25 +185,39 @@ router.post('/register', validateRegister, async (req, res) => {
 router.post('/login', validateLogin, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    logger.warn('Валидация входа не пройдена', { errors: errors.array() });
     return res.status(400).json({ errors: errors.array() });
   }
 
   const { login, password } = req.body;
+  logger.info('Попытка входа пользователя', { login });
+
+  let client;
   try {
-    const pool = req.app.locals.pool;
-    const userResult = await pool.query('SELECT * FROM users WHERE login = $1', [login]);
+    client = await pool.connect();
+    
+    const userResult = await client.query('SELECT * FROM users WHERE login = $1', [login]);
     
     if (userResult.rows.length === 0) {
+      logger.warn('Пользователь не найден', { login });
       return res.status(404).json({ error: 'Пользователь не найден' });
     }
 
     const user = userResult.rows[0];
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
+      logger.warn('Неверный пароль', { login });
       return res.status(401).json({ error: 'Неверный пароль' });
     }
 
-    const token = jwt.sign({ id: user.id, login: user.login }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    if (!process.env.JWT_SECRET) {
+      logger.error('JWT_SECRET не установлен');
+      return res.status(500).json({ error: 'Ошибка сервера: JWT_SECRET не настроен' });
+    }
+
+    const token = jwt.sign({ id: user.id, login: user.login }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    logger.info('Пользователь успешно вошел', { userId: user.id, login });
+    
     res.json({ 
       token, 
       user: { 
@@ -138,63 +227,60 @@ router.post('/login', validateLogin, async (req, res) => {
       } 
     });
   } catch (error) {
-    console.error('Ошибка входа:', error);
+    logger.error('Ошибка входа', {
+      error: error.message,
+      stack: error.stack,
+      login
+    });
     res.status(500).json({ error: 'Ошибка сервера при входе' });
+  } finally {
+    if (client) {
+      client.release();
+    }
   }
 });
 
 // CLI mode
 async function runCLIMode() {
-  console.log('Попытка подключения к базе данных...');
+  logger.info('Попытка подключения к базе данных');
   let client;
   try {
     client = await pool.connect();
-    console.log('✓ Подключение к БД успешно установлено');
+    logger.info('Подключение к БД успешно установлено');
     
     await logTableInfo(client, 'users');
     
-    console.log('\n✓ Все проверки завершены');
+    logger.info('Все проверки завершены');
   } catch (error) {
-    console.error('\n✗ Ошибка подключения:', error.message);
-    console.error('Стек ошибки:', error.stack);
+    logger.error('Ошибка подключения', {
+      error: error.message,
+      stack: error.stack,
+      code: error.code
+    });
     
     if (error.code) {
-      console.error('\nКод ошибки:', error.code);
-      console.error('Возможные причины:');
-      
-      switch (error.code) {
-        case 'ECONNREFUSED':
-          console.error('- Сервер БД не запущен или недоступен');
-          console.error('- Неправильный порт или хост');
-          break;
-        case '28P01':
-          console.error('- Неверное имя пользователя или пароль');
-          break;
-        case '3D000':
-          console.error('- База данных не существует');
-          console.error(`- Проверьте имя БД: ${process.env.DB_NAME || 'не указано'}`);
-          break;
-        case 'ENOTFOUND':
-          console.error('- Сервер БД не найден (проверьте хост)');
-          break;
-        case 'ETIMEDOUT':
-          console.error('- Таймаут подключения (проверьте доступность сервера)');
-          break;
-        default:
-          console.error('- Неизвестная ошибка, проверьте параметры подключения');
-      }
+      logger.error('Возможные причины ошибки', {
+        code: error.code,
+        details: {
+          'ECONNREFUSED': 'Сервер БД не запущен или недоступен, проверьте порт и хост',
+          '28P01': 'Неверное имя пользователя или пароль',
+          '3D000': `База данных не существует: ${process.env.DB_NAME || 'не указано'}`,
+          'ENOTFOUND': 'Сервер БД не найден (проверьте хост)',
+          'ETIMEDOUT': 'Таймаут подключения (проверьте доступность сервера)'
+        }[error.code] || 'Неизвестная ошибка, проверьте параметры подключения'
+      });
     }
   } finally {
     if (client) client.release();
-    console.log('\nЗавершение работы с пулом соединений');
+    logger.info('Завершение работы с пулом соединений');
     await pool.end();
-    console.log('Скрипт завершен');
+    logger.info('Скрипт завершен');
   }
 }
 
 if (require.main === module) {
   runCLIMode().catch(err => {
-    console.error('Ошибка выполнения скрипта:', err.message);
+    logger.error('Ошибка выполнения скрипта', { error: err.message });
     process.exit(1);
   });
 }

@@ -1,17 +1,7 @@
-/*Запуск для проверки из server node routes/purchaseHistory.js */
 const express = require('express');
 const router = express.Router();
-delete require.cache[require.resolve('../db')];
+const jwt = require('jsonwebtoken');
 const pool = require('../db');
-
-// Отладка: вывод переменных окружения
-console.log('Environment variables for purchaseHistory.js:', {
-  DB_USER: process.env.DB_USER,
-  DB_HOST: process.env.DB_HOST,
-  DB_NAME: process.env.DB_NAME,
-  DB_PASSWORD: process.env.DB_PASSWORD ? '[REDACTED]' : undefined,
-  DB_PORT: process.env.DB_PORT
-});
 
 // Middleware для проверки токена
 const authenticateToken = (req, res, next) => {
@@ -83,9 +73,10 @@ async function logTableInfo(client, tableName) {
 
 // Получение истории покупок пользователя
 router.get('/user/:user_id', authenticateToken, async (req, res) => {
+  let client;
   try {
-    const pool = req.app.locals.pool;
-    const result = await pool.query(
+    client = await pool.connect();
+    const result = await client.query(
       `SELECT ph.id_pokupki, ph.id_zakaza, ph.id_item, ph.id_pokupatelya,
               o.name as item_name, o.price::text as price, o.datazakaza, 
               u.login as seller_name
@@ -101,6 +92,8 @@ router.get('/user/:user_id', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Ошибка получения истории покупок:', error);
     res.status(500).json({ error: 'Ошибка сервера при получении истории покупок' });
+  } finally {
+    if (client) client.release();
   }
 });
 

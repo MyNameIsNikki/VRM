@@ -1,10 +1,11 @@
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
 const dotenv = require('dotenv');
 const morgan = require('morgan'); 
 const winston = require('winston'); 
 
+// Импортируем пул
+const pool = require('./db');
 
 const logger = winston.createLogger({
   level: 'info',
@@ -28,7 +29,6 @@ dotenv.config();
 
 const app = express();
 
-
 app.use((req, res, next) => {
   const start = Date.now();
   res.on('finish', () => {
@@ -45,22 +45,13 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
   optionsSuccessStatus: 200
 }));
-app.use((req, res, next) => {
-  logger.info('CORS check', {
-    origin: req.get('origin'),
-    allowed: 'http://localhost:3000'
-  });
-  next();
-});
 
 app.use(express.json());
-
 
 app.use(morgan('combined', {
   stream: {
@@ -68,43 +59,8 @@ app.use(morgan('combined', {
   }
 }));
 
-
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-});
-
-
-pool.on('connect', () => {
-  logger.info('Database connection established successfully');
-});
-
-pool.on('error', (err) => {
-  logger.error('Database connection error', {
-    error: err.message,
-    stack: err.stack
-  });
-});
-
-
-pool.query('SELECT NOW()', (err, res) => {
-  if (err) {
-    logger.error('Database connection test failed', {
-      error: err.message,
-      stack: err.stack
-    });
-  } else {
-    logger.info('Database connection test successful', {
-      result: res.rows[0].now
-    });
-  }
-});
-
+// Используем импортированный пул
 app.locals.pool = pool;
-
 
 const logRoute = (routeName) => (req, res, next) => {
   logger.info(`Processing ${routeName} request`, {
@@ -116,21 +72,32 @@ const logRoute = (routeName) => (req, res, next) => {
   next();
 };
 
-
 app.use('/api/auth', logRoute('auth'), authRoutes);
 app.use('/api/items', logRoute('items'), itemsRoutes);
 app.use('/api/orders', logRoute('orders'), ordersRoutes);
 app.use('/api/sellers', logRoute('sellers'), sellersRoutes);
 app.use('/api/purchase-history', logRoute('purchase-history'), purchaseHistoryRoutes);
 
-
-app.get('/health', (req, res) => {
+app.get('/health', async (req, res) => {
   logger.info('Health check requested');
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime()
-  });
+  try {
+    // Проверяем подключение к БД
+    await pool.query('SELECT NOW()');
+    res.json({
+      status: 'ok',
+      database: 'connected',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime()
+    });
+  } catch (error) {
+    logger.error('Health check failed', { error: error.message });
+    res.status(500).json({
+      status: 'error',
+      database: 'disconnected',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 app.get('/', (req, res) => {
@@ -168,7 +135,6 @@ app.listen(PORT, () => {
   });
 });
 
-
 process.on('uncaughtException', (err) => {
   logger.error('Uncaught Exception', {
     error: err.message,
@@ -182,4 +148,17 @@ process.on('unhandledRejection', (reason, promise) => {
     reason: reason instanceof Error ? reason.message : reason,
     stack: reason instanceof Error ? reason.stack : undefined
   });
+});
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  logger.info('Received SIGINT. Shutting down gracefully...');
+  await pool.end();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  logger.info('Received SIGTERM. Shutting down gracefully...');
+  await pool.end();
+  process.exit(0);
 });

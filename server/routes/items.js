@@ -1,20 +1,8 @@
-/*Запуск для проверки из server node routes/items.js */
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
-
-delete require.cache[require.resolve('../db')];
 const pool = require('../db');
-
-// Отладка: вывод переменных окружения
-console.log('Environment variables for items.js:', {
-  DB_USER: process.env.DB_USER,
-  DB_HOST: process.env.DB_HOST,
-  DB_NAME: process.env.DB_NAME,
-  DB_PASSWORD: process.env.DB_PASSWORD ? '[REDACTED]' : undefined,
-  DB_PORT: process.env.DB_PORT
-});
 
 // Middleware для проверки токена
 const authenticateToken = (req, res, next) => {
@@ -81,9 +69,10 @@ async function logTableInfo(client, tableName) {
 
 // Получение всех товаров
 router.get('/', async (req, res) => {
+  let client;
   try {
-    const pool = req.app.locals.pool;
-    const result = await pool.query(`
+    client = await pool.connect();
+    const result = await client.query(`
       SELECT i.id_item, i.id_prodavca, i.kachestvo, i.price::text as price, i.nazvanie, i.timevystav, u.login as seller_name 
       FROM public."skins" i
       JOIN public."sellers" s ON i.id_prodavca = s.id_prodavca
@@ -93,14 +82,17 @@ router.get('/', async (req, res) => {
   } catch (error) {
     console.error('Ошибка получения товаров:', error);
     res.status(500).json({ error: 'Ошибка сервера при получении товаров' });
+  } finally {
+    if (client) client.release();
   }
 });
 
 // Получение товара по ID
 router.get('/:id', async (req, res) => {
+  let client;
   try {
-    const pool = req.app.locals.pool;
-    const result = await pool.query(`
+    client = await pool.connect();
+    const result = await client.query(`
       SELECT i.id_item, i.id_prodavca, i.kachestvo, i.price::text as price, i.nazvanie, i.timevystav, u.login as seller_name 
       FROM public."skins" i
       JOIN public."sellers" s ON i.id_prodavca = s.id_prodavca
@@ -116,6 +108,8 @@ router.get('/:id', async (req, res) => {
   } catch (error) {
     console.error('Ошибка получения товара:', error);
     res.status(500).json({ error: 'Ошибка сервера при получении товара' });
+  } finally {
+    if (client) client.release();
   }
 });
 
@@ -131,15 +125,19 @@ router.post('/add', authenticateToken, [
   }
 
   const { nazvanie, price, kachestvo } = req.body;
+  let client;
+  
   try {
-    const pool = req.app.locals.pool;
-    const sellerResult = await pool.query('SELECT id_prodavca FROM public."sellers" WHERE id_polz = $1', [req.user.id]);
+    client = await pool.connect();
+    
+    // Получаем id продавца по id пользователя
+    const sellerResult = await client.query('SELECT id_prodavca FROM public."sellers" WHERE id_polz = $1', [req.user.id]);
     if (sellerResult.rows.length === 0) {
       return res.status(403).json({ error: 'Пользователь не является продавцом' });
     }
     const id_prodavca = sellerResult.rows[0].id_prodavca;
 
-    const result = await pool.query(
+    const result = await client.query(
       `INSERT INTO public."skins" 
       (id_prodavca, nazvanie, price, kachestvo, timevystav) 
       VALUES ($1, $2, $3, $4, CURRENT_DATE) 
@@ -151,6 +149,8 @@ router.post('/add', authenticateToken, [
   } catch (error) {
     console.error('Ошибка добавления товара:', error);
     res.status(500).json({ error: 'Ошибка сервера при добавлении товара' });
+  } finally {
+    if (client) client.release();
   }
 });
 

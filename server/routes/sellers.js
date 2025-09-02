@@ -1,17 +1,6 @@
-/*Запуск для проверки из server node routes/sellers.js */
 const express = require('express');
 const router = express.Router();
-delete require.cache[require.resolve('../db')];
 const pool = require('../db');
-
-// Отладка: вывод переменных окружения
-console.log('Environment variables for sellers.js:', {
-  DB_USER: process.env.DB_USER,
-  DB_HOST: process.env.DB_HOST,
-  DB_NAME: process.env.DB_NAME,
-  DB_PASSWORD: process.env.DB_PASSWORD ? '[REDACTED]' : undefined,
-  DB_PORT: process.env.DB_PORT
-});
 
 // Функция для проверки таблицы и вывода всех колонок
 async function logTableInfo(client, tableName) {
@@ -65,9 +54,10 @@ async function logTableInfo(client, tableName) {
 
 // Получение всех продавцов
 router.get('/', async (req, res) => {
+  let client;
   try {
-    const pool = req.app.locals.pool;
-    const result = await pool.query(`
+    client = await pool.connect();
+    const result = await client.query(`
       SELECT s.*, u.login 
       FROM public."sellers" s
       JOIN public."users" u ON s.id_polz = u.id
@@ -76,14 +66,17 @@ router.get('/', async (req, res) => {
   } catch (error) {
     console.error('Ошибка получения продавцов:', error);
     res.status(500).json({ error: 'Ошибка сервера при получении продавцов' });
+  } finally {
+    if (client) client.release();
   }
 });
 
 // Получение продавца по ID пользователя
 router.get('/user/:user_id', async (req, res) => {
+  let client;
   try {
-    const pool = req.app.locals.pool;
-    const result = await pool.query(`
+    client = await pool.connect();
+    const result = await client.query(`
       SELECT s.*, u.login 
       FROM public."sellers" s
       JOIN public."users" u ON s.id_polz = u.id
@@ -98,6 +91,8 @@ router.get('/user/:user_id', async (req, res) => {
   } catch (error) {
     console.error('Ошибка получения продавца:', error);
     res.status(500).json({ error: 'Ошибка сервера при получении продавца' });
+  } finally {
+    if (client) client.release();
   }
 });
 

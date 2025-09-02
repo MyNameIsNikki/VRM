@@ -1,19 +1,8 @@
-/*Запуск для проверки из server node routes/orders.js */
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
-delete require.cache[require.resolve('../db')];
 const pool = require('../db');
-
-// Отладка: вывод переменных окружения
-console.log('Environment variables for orders.js:', {
-  DB_USER: process.env.DB_USER,
-  DB_HOST: process.env.DB_HOST,
-  DB_NAME: process.env.DB_NAME,
-  DB_PASSWORD: process.env.DB_PASSWORD ? '[REDACTED]' : undefined,
-  DB_PORT: process.env.DB_PORT
-});
 
 // Middleware для проверки токена
 const authenticateToken = (req, res, next) => {
@@ -28,7 +17,7 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// Функция для проверки таблицы и вывода всех колонок
+// Функция для проверки таблиции и вывода всех колонок
 async function logTableInfo(client, tableName) {
   try {
     const checkRes = await client.query(
@@ -93,35 +82,29 @@ router.post('/create', authenticateToken, [
   }
 
   const { item_id } = req.body;
+  let client;
+  
   try {
-    const pool = req.app.locals.pool;
+    client = await pool.connect();
     
+    // Начинаем транзакцию
+    await client.query('BEGIN');
+
     // Получаем товар
-    const itemResult = await pool.query(
+    const itemResult = await client.query(
       `SELECT id_item, id_prodavca, nazvanie, price 
        FROM public."skins" 
        WHERE id_item = $1`,
       [item_id]
     );
     if (itemResult.rows.length === 0) {
+      await client.query('ROLLBACK');
       return res.status(404).json({ error: 'Товар не найден' });
     }
     const item = itemResult.rows[0];
 
-    // Получаем пользователя
-    const userResult = await pool.query(
-      `SELECT id, link 
-       FROM public."users" 
-       WHERE id = $1`,
-      [req.user.id]
-    );
-    if (userResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Пользователь не найден' });
-    }
-    const user = userResult.rows[0];
-
     // Создаем заказ
-    const orderResult = await pool.query(
+    const orderResult = await client.query(
       `INSERT INTO public."zakaz" 
       (id_pokupatelya, id_prodavca, id_item, price, name, datazakaza) 
       VALUES ($1, $2, $3, $4, $5, CURRENT_DATE) 
@@ -131,25 +114,35 @@ router.post('/create', authenticateToken, [
     const order = orderResult.rows[0];
 
     // Добавляем в историю покупок
-    await pool.query(
+    await client.query(
       `INSERT INTO public."history" 
       (id_zakaza, id_item, id_pokupatelya) 
       VALUES ($1, $2, $3)`,
       [order.id_zakaza, item.id_item, req.user.id]
     );
 
+    // Коммитим транзакцию
+    await client.query('COMMIT');
+
     res.status(201).json(order);
   } catch (error) {
+    // Откатываем транзакцию в случае ошибки
+    if (client) {
+      await client.query('ROLLBACK');
+    }
     console.error('Ошибка создания заказа:', error);
     res.status(500).json({ error: 'Ошибка сервера при создании заказа' });
+  } finally {
+    if (client) client.release();
   }
 });
 
 // Получение заказов пользователя
 router.get('/user/:user_id', authenticateToken, async (req, res) => {
+  let client;
   try {
-    const pool = req.app.locals.pool;
-    const result = await pool.query(
+    client = await pool.connect();
+    const result = await client.query(
       `SELECT o.id_zakaza, o.id_pokupatelya, o.id_prodavca, o.datazakaza, o.name, o.id_item, o.price::text, 
               i.nazvanie as item_name, u.login as seller_name 
        FROM public."zakaz" o
@@ -164,6 +157,8 @@ router.get('/user/:user_id', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Ошибка получения заказов:', error);
     res.status(500).json({ error: 'Ошибка сервера при получении заказов' });
+  } finally {
+    if (client) client.release();
   }
 });
 
