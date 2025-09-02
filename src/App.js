@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate, Navigate } from 'react-router-dom';
 import Modal from 'react-modal';
 import Header from './components/Header/Header';
 import HomePage from './pages/HomePage';
@@ -14,6 +14,7 @@ import exaltedFeast from './assets/Exalted Feast of Abscession - Back.svg';
 import goldencrucibleofrile from './assets/Golden Crucible of Rile.svg';
 import headoftheodobenusone from './assets/Head of the Odobenus One.svg';
 import { secureStorage } from './components/utils/secureStorage';
+
 
 Modal.setAppElement('#root');
 
@@ -163,7 +164,8 @@ const clearCart = () => {
         onLogin={handleLogin}
       />
       <Routes>
-        <Route path="/" element={
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/home" element={
           <HomePage 
             filteredItems={filteredItems}
             addToCart={addToCart}
