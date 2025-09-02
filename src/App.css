@@ -47,7 +47,6 @@ footer {
 }
 
 .buy-button {
-  
   padding: 10px 15px;
   background: linear-gradient(to right, #cc0000, #990000);
   border: none;
@@ -68,42 +67,38 @@ footer {
   letter-spacing: 0.8px;
   white-space: nowrap;
   box-shadow: 0 3px 8px rgba(204, 0, 0, 0.3);
-  
-  
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  text-align: center;
+  position: relative; /* Добавляем, чтобы псевдоэлемент был привязан к кнопке */
+  overflow: hidden; /* Ограничиваем псевдоэлемент внутри кнопки */
 }
 
 
-.buy-button span {
-  display: inline-block;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.buy-button span,
+.buy-button i {
+  position: relative; /* Убедимся, что текст и иконка выше псевдоэлемента */
+  z-index: 2;
 }
 
 
 .buy-button::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: 0.5s;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+  z-index: 1; /* Устанавливаем ниже контента кнопки */
 }
 
 .buy-button:hover::before {
-    left: 100%;
+  left: 100%;
 }
 
 .buy-button:hover {
-    background: linear-gradient(to right, #ff3333, #cc0000);
-    box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
-    transform: translateY(-3px);
+  background: linear-gradient(to right, #ff3333, #cc0000);
+  box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
+  transform: translateY(-3px);
 }
 
 .loader-container {
