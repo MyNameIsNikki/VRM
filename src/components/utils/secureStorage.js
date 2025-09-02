@@ -1,44 +1,53 @@
 // Безопасное хранилище для чувствительных данных
 export const secureStorage = {
-  // Шифрование данных перед сохранением
   setItem: (key, value) => {
     try {
-      // Простое шифрование (в реальном приложении используйте более сложные методы)
+      console.log(`secureStorage.setItem: key=${key}, value=`, value); // Отладка
       const encryptedValue = btoa(encodeURIComponent(JSON.stringify(value)));
       localStorage.setItem(key, encryptedValue);
+      console.log(`secureStorage.setItem: saved key=${key}, encryptedValue=${encryptedValue}`); // Отладка
     } catch (error) {
-      console.error('Ошибка при сохранении данных:', error);
+      console.error(`secureStorage.setItem: error for key=${key}, error=`, error);
     }
   },
-  
-  // Дешифрование данных при получении
+
   getItem: (key) => {
     try {
       const encryptedValue = localStorage.getItem(key);
-      if (!encryptedValue) return null;
-      
-      return JSON.parse(decodeURIComponent(atob(encryptedValue)));
+      console.log(`secureStorage.getItem: key=${key}, encryptedValue=${encryptedValue}`); // Отладка
+      if (!encryptedValue) {
+        console.warn(`secureStorage.getItem: no value found for key=${key}`);
+        return null;
+      }
+      // Проверка валидности base64
+      if (!/^[A-Za-z0-9+/=]+$/.test(encryptedValue)) {
+        console.error(`secureStorage.getItem: invalid base64 format for key=${key}`);
+        return null;
+      }
+      const decodedValue = JSON.parse(decodeURIComponent(atob(encryptedValue)));
+      console.log(`secureStorage.getItem: retrieved key=${key}, value=`, decodedValue); // Отладка
+      return decodedValue;
     } catch (error) {
-      console.error('Ошибка при получении данных:', error);
+      console.error(`secureStorage.getItem: error for key=${key}, error=`, error);
       return null;
     }
   },
-  
-  // Удаление данных
+
   removeItem: (key) => {
     try {
+      console.log(`secureStorage.removeItem: key=${key}`); // Отладка
       localStorage.removeItem(key);
     } catch (error) {
-      console.error('Ошибка при удалении данных:', error);
+      console.error(`secureStorage.removeItem: error for key=${key}, error=`, error);
     }
   },
-  
-  // Очистка всех данных
+
   clear: () => {
     try {
+      console.log('secureStorage.clear called'); // Отладка
       localStorage.clear();
     } catch (error) {
-      console.error('Ошибка при очистке данных:', error);
+      console.error('secureStorage.clear: error=', error);
     }
-  }
+  },
 };

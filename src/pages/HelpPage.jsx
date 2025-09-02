@@ -15,7 +15,10 @@ const HelpPage = ({
   removeFromCart, 
   getTotalPrice, 
   openModal, 
-  setCartModalIsOpen 
+  setCartModalIsOpen,
+  isLoggedIn,
+  onLogout,
+  onLogin
 }) => {
   const [activeFaq, setActiveFaq] = useState(null);
   const [contactForm, setContactForm] = useState({
@@ -155,9 +158,12 @@ const HelpPage = ({
   return (
     <div className="help-page">
       <Header 
-        openModal={handleOpenModal}
-        setCartModalIsOpen={setCartModalIsOpenState}
+        openModal={openModal}
+        setCartModalIsOpen={setCartModalIsOpen}
         cart={cart}
+        isLoggedIn={isLoggedIn}
+        onLogout={onLogout}
+        onLogin={onLogin}
       />
 
       <div className="full-width title-block">

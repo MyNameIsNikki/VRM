@@ -8,19 +8,22 @@ const Header = ({ openModal, setCartModalIsOpen, cart, isLoggedIn, onLogout, onL
   const navigate = useNavigate();
   const [activeAuthModal, setActiveAuthModal] = useState(null);
 
+  console.log('Header: isLoggedIn=', isLoggedIn); // Отладка
+
   const handleLoginSuccess = (token) => {
-    console.log('Пользователь успешно вошел');
+    console.log('Header: handleLoginSuccess, token=', token); // Отладка
     setActiveAuthModal(null);
     onLogin(token);
   };
 
   const handleRegisterSuccess = (token) => {
-    console.log('Пользователь успешно зарегистрировался');
+    console.log('Header: handleRegisterSuccess, token=', token); // Отладка
     setActiveAuthModal(null);
     onLogin(token);
   };
 
   const handleLogoutClick = () => {
+    console.log('Header: handleLogoutClick called'); // Отладка
     onLogout();
     navigate('/');
   };
@@ -83,4 +86,4 @@ const Header = ({ openModal, setCartModalIsOpen, cart, isLoggedIn, onLogout, onL
   );
 };
 
-export default Header;  
+export default Header;

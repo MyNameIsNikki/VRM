@@ -10,7 +10,6 @@ import HelpPage from './pages/HelpPage';
 import CartModal from './components/modals/CartModal';
 import InfoModal from './components/modals/InfoModal';
 import items from './data/items';
-import vrmLogo from './assets/VRM.png';
 import exaltedFeast from './assets/Exalted Feast of Abscession - Back.svg';
 import goldencrucibleofrile from './assets/Golden Crucible of Rile.svg';
 import headoftheodobenusone from './assets/Head of the Odobenus One.svg';
@@ -21,19 +20,18 @@ Modal.setAppElement('#root');
 function App() {
   const [cart, setCart] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
   const [modalIsOpen, setModalIsOpen] = useState({ type: null });
   const [cartModalIsOpen, setCartModalIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
-  
-  const [recentlySold, setRecentlySold] = useState([
+
+  const [recentlySold] = useState([
     { id: 1, name: "Exalted Feast of Abscession - Back", price: 39.72, image: exaltedFeast },
     { id: 2, name: "Golden Crucible of Rile", price: 39.56, image: goldencrucibleofrile },
     { id: 3, name: "Head of the Odobenus One", price: 12.92, image: headoftheodobenusone },
   ]);
-  
-  const [statsData, setStatsData] = useState({
+
+  const [statsData] = useState({
     totalSold: "3",
     totalReviews: "1",
     averageRating: "4.8"
@@ -44,113 +42,69 @@ function App() {
     const token = secureStorage.getItem('authToken');
     const loginTime = secureStorage.getItem('loginTime');
     const currentTime = new Date().getTime();
-    
-    // Обновляем токен если осталось меньше 4 часов
-    if (token && loginTime && (currentTime - parseInt(loginTime)) > 20 * 60 * 60 * 1000) {
+
+    console.log('refreshTokenIfNeeded: token=', token, 'loginTime=', loginTime); // Отладка
+
+    if (token && loginTime && !isNaN(parseInt(loginTime)) && (currentTime - parseInt(loginTime)) > 20 * 60 * 60 * 1000) {
       const newToken = 'demo-auth-token-' + Math.random().toString(36).substr(2);
       secureStorage.setItem('authToken', newToken);
-      secureStorage.setItem('loginTime', new Date().getTime());
+      secureStorage.setItem('loginTime', currentTime.toString());
+      console.log('Token refreshed: newToken=', newToken); // Отладка
     }
   };
 
-  // Проверка авторизации при загрузке
+  // Проверка авторизации
   useEffect(() => {
+    // Добавление мета-тегов
+    const viewportMeta = document.createElement('meta');
+    viewportMeta.name = 'viewport';
+    viewportMeta.content = 'width=device-width, initial-scale=1.0';
+    document.head.appendChild(viewportMeta);
+
+    const cspMeta = document.createElement('meta');
+    cspMeta.setAttribute('http-equiv', 'Content-Security-Policy');
+    cspMeta.setAttribute('content', "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data:;");
+    document.head.appendChild(cspMeta);
+
+    // Проверка авторизации
     const checkAuthStatus = () => {
       const token = secureStorage.getItem('authToken');
       const loginTime = secureStorage.getItem('loginTime');
       const currentTime = new Date().getTime();
-      
-      // Если токен существует и не истек срок (24 часа)
-      if (token && loginTime && (currentTime - parseInt(loginTime)) < 24 * 60 * 60 * 1000) {
+
+      console.log('checkAuthStatus: token=', token, 'loginTime=', loginTime, 'isLoggedIn=', isLoggedIn); // Отладка
+
+      if (token && loginTime && !isNaN(parseInt(loginTime)) && (currentTime - parseInt(loginTime)) < 24 * 60 * 60 * 1000) {
         setIsLoggedIn(true);
       } else {
-        // Очищаем устаревшие данные
         secureStorage.removeItem('authToken');
         secureStorage.removeItem('loginTime');
         secureStorage.removeItem('login_username');
         secureStorage.removeItem('login_remember');
         setIsLoggedIn(false);
+        console.log('Auth cleared: invalid or expired token'); // Отладка
       }
-      refreshTokenIfNeeded();
     };
 
     checkAuthStatus();
-
-    // Добавим базовые настройки безопасности
-    const metaCharset = document.createElement('meta');
-    metaCharset.setAttribute('charset', 'UTF-8');
-    document.head.appendChild(metaCharset);
-    
-    const metaViewport = document.createElement('meta');
-    metaViewport.setAttribute('name', 'viewport');
-    metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
-    metaViewport.setAttribute('http-equiv', 'Content-Security-Policy', "default-src 'self'");
-    document.head.appendChild(metaViewport);
-    
-    // Добавляем CSP meta tag
-    const cspMeta = document.createElement('meta');
-    cspMeta.setAttribute('http-equiv', 'Content-Security-Policy');
-    cspMeta.setAttribute('content', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:");
-    document.head.appendChild(cspMeta);
-
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    const showTime = () => {
-      const timeElement = document.getElementById('currentTime');
-      if (timeElement) {
-        timeElement.textContent = new Date().toUTCString();
-      }
-    };
-    
-    showTime();
-    const interval = setInterval(showTime, 1000);
-
-    // Периодическая проверка авторизации каждые 10 минут
-    const authCheckInterval = setInterval(checkAuthStatus, 10 * 60 * 1000);
-
-    return () => {
-      clearTimeout(timer);
-      clearInterval(interval);
-      clearInterval(authCheckInterval);
-    };
+    refreshTokenIfNeeded();
   }, []);
 
-  // Функция для входа пользователя
   const handleLogin = (token) => {
-    secureStorage.setItem('authToken', token);
-    secureStorage.setItem('loginTime', new Date().getTime());
+    console.log('handleLogin: token=', token); // Отладка
     setIsLoggedIn(true);
+    secureStorage.setItem('authToken', token);
+    secureStorage.setItem('loginTime', new Date().getTime().toString());
   };
 
-  // Функция для выхода пользователя
   const handleLogout = () => {
+    console.log('handleLogout called'); // Отладка
+    setIsLoggedIn(false);
     secureStorage.removeItem('authToken');
     secureStorage.removeItem('loginTime');
-    setIsLoggedIn(false);
-    setCart([]);
+    secureStorage.removeItem('login_username');
+    secureStorage.removeItem('login_remember');
     navigate('/');
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const filteredItems = items.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const addToCart = (item) => {
-    setCart([...cart, item]);
-  };
-
-  const removeFromCart = (itemId) => {
-    setCart(cart.filter((item) => item.id !== itemId));
-  };
-
-  const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + item.price, 0).toFixed(2);
   };
 
   const openModal = (type) => {
@@ -161,20 +115,29 @@ function App() {
     setModalIsOpen({ type: null });
   };
 
-  if (isLoading) {
-    return (
-      <div className="loader-container">
-        <div className="logo-loader">
-          <div className="logo" style={{ backgroundImage: `url(${vrmLogo})` }}></div>
-        </div>
-        <p id="currentTime" style={{ color: 'white' }}></p>
-      </div>
-    );
-  }
+  const addToCart = (item) => {
+    setCart((prevCart) => [...prevCart, item]);
+  };
+
+  const removeFromCart = (itemId) => {
+    setCart((prevCart) => prevCart.filter((item) => item.id !== itemId));
+  };
+
+  const getTotalPrice = () => {
+    return cart.reduce((total, item) => total + item.price, 0).toFixed(2);
+  };
+
+  const filteredItems = items.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   return (
     <div className="app">
-      <Header 
+      <Header
         openModal={openModal}
         setCartModalIsOpen={setCartModalIsOpen}
         cart={cart}
@@ -182,7 +145,6 @@ function App() {
         onLogout={handleLogout}
         onLogin={handleLogin}
       />
-      
       <Routes>
         <Route path="/" element={
           <HomePage 
@@ -257,7 +219,10 @@ function App() {
             removeFromCart={removeFromCart}
             getTotalPrice={getTotalPrice}
             openModal={openModal}
+            setCartModalIsOpen={setCartModalIsOpen}
             isLoggedIn={isLoggedIn}
+            onLogout={handleLogout}
+            onLogin={handleLogin}
           />
         } />
       </Routes>
