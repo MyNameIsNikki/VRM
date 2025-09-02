@@ -83,65 +83,70 @@ async function logTableInfo(client, tableName) {
 router.post('/register', validateRegister, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    logger.warn('Валидация регистрации не пройдена', { errors: errors.array() });
     return res.status(400).json({ errors: errors.array() });
   }
 
   const { login, password, link } = req.body;
-  logger.info('Попытка регистрации пользователя', { login });
-
-  let client;
+  
+  const client = await pool.connect();
+  
   try {
-    // Проверяем доступность базы данных
-    await pool.query('SELECT 1');
-    
-    client = await pool.connect();
-    
-    // Начинаем транзакцию
     await client.query('BEGIN');
 
-    // Проверяем существование пользователя
-    const userCheck = await client.query('SELECT * FROM users WHERE login = $1 OR link = $2', [login, link]);
+    // Детальная диагностика - что приходит в запросе
+    console.log('Registration attempt:', { login, password, link });
+    
+    // Проверяем существование пользователя с правильными именами таблиц
+    const userCheck = await client.query(
+      'SELECT * FROM "users" WHERE login = $1 OR link = $2', 
+      [login, link]
+    );
+    
+    console.log('User check result:', userCheck.rows);
     
     if (userCheck.rows.length > 0) {
       await client.query('ROLLBACK');
       const existingUser = userCheck.rows[0];
       if (existingUser.login === login) {
-        logger.warn('Пользователь с таким логином уже существует', { login });
         return res.status(400).json({ error: 'Пользователь с таким логином уже существует' });
       } else {
-        logger.warn('Пользователь с такой ссылкой уже существует', { link });
         return res.status(400).json({ error: 'Пользователь с такой ссылкой уже существует' });
       }
     }
 
     // Хешируем пароль
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('Password hashed successfully');
     
     // Создаем пользователя
     const newUser = await client.query(
-      'INSERT INTO users (login, password, link, registrationtime) VALUES ($1, $2, $3, CURRENT_DATE) RETURNING id, login, link',
+      'INSERT INTO "users" (login, password, link, registrationtime) VALUES ($1, $2, $3, CURRENT_DATE) RETURNING id, login, link',
       [login, hashedPassword, link]
     );
 
+    console.log('User created:', newUser.rows[0]);
+    
     const user = newUser.rows[0];
     
     // Создаем запись продавца
-    await client.query(
-      'INSERT INTO sellers (link, id_polz) VALUES ($1, $2)',
+    const sellerResult = await client.query(
+      'INSERT INTO "sellers" (link, id_polz) VALUES ($1, $2) RETURNING *',
       [user.link, user.id]
     );
+    
+    console.log('Seller created:', sellerResult.rows[0]);
 
-    // Коммитим транзакцию
     await client.query('COMMIT');
-
-    if (!process.env.JWT_SECRET) {
-      logger.error('JWT_SECRET не установлен');
-      return res.status(500).json({ error: 'Ошибка сервера: JWT_SECRET не настроен' });
-    }
+    console.log('Transaction committed successfully');
 
     const token = jwt.sign({ id: user.id, login: user.login }, process.env.JWT_SECRET, { expiresIn: '24h' });
-    logger.info('Пользователь успешно зарегистрирован', { userId: user.id, login });
+    
+    // Проверяем, что данные действительно сохранились
+    const verifyUser = await client.query('SELECT * FROM "users" WHERE id = $1', [user.id]);
+    const verifySeller = await client.query('SELECT * FROM "sellers" WHERE id_polz = $1', [user.id]);
+    
+    console.log('Verification - User exists:', verifyUser.rows.length > 0);
+    console.log('Verification - Seller exists:', verifySeller.rows.length > 0);
     
     res.status(201).json({ 
       token, 
@@ -151,33 +156,28 @@ router.post('/register', validateRegister, async (req, res) => {
         link: user.link
       } 
     });
-  } catch (error) {
-    // Откатываем транзакцию в случае ошибки
-    if (client) {
-      try {
-        await client.query('ROLLBACK');
-      } catch (rollbackError) {
-        logger.error('Ошибка при откате транзакции', { error: rollbackError.message });
-      }
-    }
     
-    logger.error('Ошибка регистрации', {
-      error: error.message,
-      stack: error.stack,
-      login
+  } catch (error) {
+    await client.query('ROLLBACK');
+    
+    console.error('Registration error details:', {
+      message: error.message,
+      code: error.code,
+      detail: error.detail,
+      constraint: error.constraint,
+      stack: error.stack
     });
     
     if (error.code === '23505') {
-      logger.warn('Нарушение уникальности при регистрации', { login, constraint: error.constraint });
       return res.status(400).json({ error: 'Логин или ссылка уже используются' });
     }
     
-    res.status(500).json({ error: 'Ошибка сервера при регистрации' });
+    res.status(500).json({ 
+      error: 'Ошибка сервера при регистрации',
+      details: error.message 
+    });
   } finally {
-    // Всегда освобождаем клиента
-    if (client) {
-      client.release();
-    }
+    client.release();
   }
 });
 

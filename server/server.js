@@ -30,6 +30,16 @@ dotenv.config();
 const app = express();
 
 app.use((req, res, next) => {
+  console.log('Incoming request:', {
+    method: req.method,
+    url: req.url,
+    body: req.body,
+    time: new Date().toISOString()
+  });
+  next();
+});
+
+app.use((req, res, next) => {
   const start = Date.now();
   res.on('finish', () => {
     const duration = Date.now() - start;
