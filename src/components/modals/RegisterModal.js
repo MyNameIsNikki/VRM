@@ -160,70 +160,72 @@ const RegisterModal = ({ isOpen, onClose, onRegisterSuccess, onSwitchToLogin }) 
 
         <h1 className="title">Создать аккаунт</h1>
 
-        <form onSubmit={handleSubmit}>
-          <div className="field">
-            <label htmlFor="username">Имя пользователя <span>*</span></label>
-            <input
-  id="confirm-password"
-  name="confirmPassword"
-  type="password"
-  placeholder="Повторите ваш пароль"
-  value={formData.confirmPassword}
-  onChange={handleInputChange}
-  autoComplete="new-password"
-  disabled={isLoading}
-/>
-            {errors.username && <div className="error">{errors.username}</div>}
-            <div className="hint"></div>
-          </div>
+      <form onSubmit={handleSubmit}>
+        {/* Добавляем поле для имени пользователя */}
+        <div className="field">
+          <label htmlFor="username">Имя пользователя <span>*</span></label>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            placeholder="Введите имя пользователя"
+            value={formData.username}
+            onChange={handleInputChange}
+            autoComplete="username"
+            disabled={isLoading}
+          />
+          {errors.username && <div className="error">{errors.username}</div>}
+          <div className="hint"></div>
+        </div>
 
-          <div className="field">
-            <label htmlFor="email">Email <span>*</span></label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="Введите ваш email"
-              value={formData.email}
-              onChange={handleInputChange}
-              autoComplete="email"
-              disabled={isLoading}
-            />
-            {errors.email && <div className="error">{errors.email}</div>}
-            <div className="hint"></div>
-          </div>
+<div className="field">
+          <label htmlFor="email">Email <span>*</span></label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Введите ваш email"
+            value={formData.email}
+            onChange={handleInputChange}
+            autoComplete="email"
+            disabled={isLoading}
+          />
+          {errors.email && <div className="error">{errors.email}</div>}
+          <div className="hint"></div>
+        </div>
 
-          <div className="field">
-            <label htmlFor="password">Пароль <span>*</span></label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Придумайте надежный пароль"
-              value={formData.password}
-              onChange={handleInputChange}
-              autoComplete="new-password"
-              disabled={isLoading}
-            />
-            {errors.password && <div className="error">{errors.password}</div>}
-            <div className="hint">Пароль должен содержать не менее 8 символов, включая цифры и буквы</div>
-          </div>
+        <div className="field">
+          <label htmlFor="password">Пароль <span>*</span></label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Придумайте надежный пароль"
+            value={formData.password}
+            onChange={handleInputChange}
+            autoComplete="new-password"
+            disabled={isLoading}
+          />
+          {errors.password && <div className="error">{errors.password}</div>}
+          <div className="hint">Пароль должен содержать не менее 8 символов, включая цифры и буквы</div>
+        </div>
 
-          <div className="field">
-  <label htmlFor="confirm-password">Подтверждение пароля <span>*</span></label>
-  <input
-    id="confirm-password"
-    name="confirmPassword"
-    type="password"
-    placeholder="Повторите ваш пароль"
-    value={formData.confirmPassword}
-    onChange={handleInputChange}
-    autoComplete="new-password"
-    disabled={isLoading}
-  />
-  {errors.confirmPassword && <div className="error">{errors.confirmPassword}</div>}
-  <div className="hint"></div>
-</div>
+        {/* Исправляем поле подтверждения пароля */}
+        <div className="field">
+          <label htmlFor="confirm-password">Подтверждение пароля <span>*</span></label>
+          <input
+            id="confirm-password"
+            name="confirmPassword"
+            type="password"
+            placeholder="Повторите ваш пароль"
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+            autoComplete="new-password"
+            disabled={isLoading}
+          />
+          {errors.confirmPassword && <div className="error">{errors.confirmPassword}</div>}
+          <div className="hint"></div>
+        </div>
 
           <div className="checkbox">
             <input
