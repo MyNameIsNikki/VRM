@@ -2,7 +2,14 @@ import React from 'react';
 import Modal from 'react-modal';
 import './CartModal.css';
 
-const CartModal = ({ isOpen, onRequestClose, cart, removeFromCart, getTotalPrice }) => {
+const CartModal = ({ 
+  isOpen, 
+  onRequestClose, 
+  cart, 
+  removeFromCart, 
+  getTotalPrice,
+  clearCart // Добавьте эту строку
+}) => {
   return (
     <Modal
       isOpen={isOpen}
@@ -61,9 +68,9 @@ const CartModal = ({ isOpen, onRequestClose, cart, removeFromCart, getTotalPrice
               </div>
               
               <div className="cart-actions">
-                <button className="clear-cart-btn" onClick={() => cart.forEach(item => removeFromCart(item.id))}>
-                  Очистить корзину
-                </button>
+              <button className="clear-cart-btn" onClick={clearCart}>
+                Очистить корзину
+              </button>
                 <button className="checkout-button">
                   <i className="fas fa-shopping-cart"></i>
                   Купить

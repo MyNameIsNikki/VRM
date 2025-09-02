@@ -119,9 +119,26 @@ function App() {
     setCart((prevCart) => [...prevCart, item]);
   };
 
-  const removeFromCart = (itemId) => {
+const removeFromCart = (itemId, removeAll = false) => {
+  if (removeAll) {
+    // Удалить все элементы с этим ID
     setCart((prevCart) => prevCart.filter((item) => item.id !== itemId));
-  };
+  } else {
+    // Удалить только один элемент (первый найденный)
+    setCart((prevCart) => {
+      const index = prevCart.findIndex((item) => item.id === itemId);
+      if (index === -1) return prevCart;
+      
+      const newCart = [...prevCart];
+      newCart.splice(index, 1);
+      return newCart;
+    });
+  }
+};
+
+const clearCart = () => {
+  setCart([]);
+};
 
   const getTotalPrice = () => {
     return cart.reduce((total, item) => total + item.price, 0).toFixed(2);
@@ -243,6 +260,7 @@ function App() {
         cart={cart}
         removeFromCart={removeFromCart}
         getTotalPrice={getTotalPrice}
+        clearCart={clearCart} // Добавьте эту строку
       />
     </div>
   );
