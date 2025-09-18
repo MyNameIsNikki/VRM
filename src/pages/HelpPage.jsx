@@ -1,3 +1,4 @@
+//https://github.com/xJleSx
 import React, { useState } from 'react';
 import Header from '../components/Header/Header';
 import AuthModal from '../components/modals/AuthModal';
@@ -62,9 +63,6 @@ const HelpPage = ({
     }
   };
 
-  const handleOpenModal = (type) => {
-    setModalIsOpen({ type });
-  };
 
   const handleCloseModal = () => {
     setModalIsOpen({ type: null });
@@ -253,7 +251,7 @@ const HelpPage = ({
             </div>
             {activeFaq === 4 && (
               <div className="faq-answer">
-                <p>Мы поддерживаем все популярные способы оплаты:</p>
+                <p>Мы поддерживаем популярные способы оплаты:</p>
                 <div className="payment-methods">
                   <div className="payment-method">
                     <i className="fab fa-cc-visa"></i>
@@ -262,14 +260,6 @@ const HelpPage = ({
                   <div className="payment-method">
                     <i className="fab fa-cc-mastercard"></i>
                     <span>Mastercard</span>
-                  </div>
-                  <div className="payment-method">
-                    <i className="fab fa-paypal"></i>
-                    <span>PayPal</span>
-                  </div>
-                  <div className="payment-method">
-                    <i className="fab fa-qiwi"></i>
-                    <span>QIWI</span>
                   </div>
                 </div>
               </div>
@@ -369,7 +359,7 @@ const HelpPage = ({
         {/* Раздел полезных ссылок */}
         <div className="help-section">
           <h2 className="help-title"><i className="fas fa-link"></i> Полезные ссылки</h2>
-          <p>Воспользуйтесь этими ресурсами для получения дополнительной информации:</p>
+          <p>Воспользуйтесь этими ресурсы для получения дополнительной информации:</p>
           
           <div className="useful-links">
             <div className="link-card">
@@ -413,10 +403,10 @@ const HelpPage = ({
             <div className="link-card">
               <h3><i className="fas fa-users"></i> Сообщество</h3>
               <ul>
-                <li><a href="./HelpPage.jsx"><i className="fab fa-steam"></i> Группа Steam</a></li>
-                <li><a href="./HelpPage.jsx"><i className="fab fa-discord"></i> Discord сервер</a></li>
-                <li><a href="./HelpPage.jsx"><i className="fab fa-reddit"></i> Reddit сообщество</a></li>
-                <li><a href="./HelpPage.jsx"><i className="fab fa-twitter"></i> Twitter</a></li>
+                <li><a href="./"><i className="fab fa-steam"></i> Группа Steam</a></li>
+                <li><a href="./"><i className="fab fa-discord"></i> Discord сервер</a></li>
+                <li><a href="./"><i className="fab fa-reddit"></i> Reddit сообщество</a></li>
+                <li><a href="./"><i className="fab fa-twitter"></i> Twitter</a></li>
               </ul>
             </div>
           </div>
