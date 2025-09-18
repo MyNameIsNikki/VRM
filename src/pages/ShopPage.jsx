@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+//https://github.com/xJleSx
+import React, { useState, useEffect } from 'react';
 import ItemCard from '../components/ItemCard/ItemCard';
 import PriceFilter from '../components/filters/PriceFilter';
 import CategoryFilter from '../components/filters/CategoryFilter';
 import './ShopPage.css';
 
-const ShopPage = ({ items, addToCart }) => {
-  const [filtersActive, setFiltersActive] = useState(true);
+const ShopPage = ({ items, addToCart, isFiltersOpen, setIsFiltersOpen }) => {
+  const [filtersActive, setFiltersActive] = useState(isFiltersOpen);
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [selectedHeroes, setSelectedHeroes] = useState([]);
@@ -23,6 +24,19 @@ const ShopPage = ({ items, addToCart }) => {
     quality: false,
     hold: false
   });
+
+  useEffect(() => {
+    setFiltersActive(isFiltersOpen);
+  }, [isFiltersOpen]);
+
+  // Создаем массив всех предложений из всех товаров
+  const allOffers = items.flatMap(item => 
+    item.offers.map(offer => ({
+      ...item,
+      price: offer.price, // Заменяем цену товара на цену предложения
+      seller: offer.seller // Заменяем продавца товара на продавца предложения
+    }))
+  );
 
   const toggleFilter = (filterType, value) => {
     switch (filterType) {
@@ -82,22 +96,23 @@ const ShopPage = ({ items, addToCart }) => {
   // Получаем уникальные значения для каждого фильтра из items
   const unique = (array) => Array.from(new Set(array));
 
-  const filteredItems = items.filter(item => {
+  // Фильтруем предложения
+  const filteredOffers = allOffers.filter(offerItem => {
     // Фильтрация по цене
     const minPrice = parseFloat(priceRange.min);
     const maxPrice = parseFloat(priceRange.max);
     
-    if (!isNaN(minPrice) && item.price < minPrice) return false;
-    if (!isNaN(maxPrice) && item.price > maxPrice) return false;
+    if (!isNaN(minPrice) && offerItem.price < minPrice) return false;
+    if (!isNaN(maxPrice) && offerItem.price > maxPrice) return false;
     
     // Остальные фильтры
-    if (selectedTypes.length > 0 && !selectedTypes.includes(item.type)) return false;
-    if (selectedHeroes.length > 0 && !selectedHeroes.includes(item.hero)) return false;
-    if (selectedSlots.length > 0 && !selectedSlots.includes(item.slot)) return false;
-    if (selectedRarities.length > 0 && !selectedRarities.includes(item.rarity)) return false;
-    if (selectedQualities.length > 0 && !selectedQualities.includes(item.quality)) return false;
-    if (selectedHolds.length > 0 && !selectedHolds.includes(item.hold)) return false;
-    if (searchQuery && !item.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (selectedTypes.length > 0 && !selectedTypes.includes(offerItem.type)) return false;
+    if (selectedHeroes.length > 0 && !selectedHeroes.includes(offerItem.hero)) return false;
+    if (selectedSlots.length > 0 && !selectedSlots.includes(offerItem.slot)) return false;
+    if (selectedRarities.length > 0 && !selectedRarities.includes(offerItem.rarity)) return false;
+    if (selectedQualities.length > 0 && !selectedQualities.includes(offerItem.quality)) return false;
+    if (selectedHolds.length > 0 && !selectedHolds.includes(offerItem.hold)) return false;
+    if (searchQuery && !offerItem.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     
     return true;
   });
@@ -114,12 +129,18 @@ const ShopPage = ({ items, addToCart }) => {
            searchQuery;
   };
 
+  const handleFiltersToggle = () => {
+    const newState = !filtersActive;
+    setFiltersActive(newState);
+    setIsFiltersOpen(newState);
+  };
+
   return (
     <div className="content-container">
       <div className="filters-panel">
         <div 
           className="filters-header" 
-          onClick={() => setFiltersActive(!filtersActive)}
+          onClick={handleFiltersToggle}
         >
           <h3><i className="fas fa-filter"></i> Фильтры</h3>
           <i className={`fas fa-chevron-${filtersActive ? 'up' : 'down'}`}></i>
@@ -207,10 +228,14 @@ const ShopPage = ({ items, addToCart }) => {
           </div>
         </div>
         
-        {filteredItems.length > 0 ? (
+        {filteredOffers.length > 0 ? (
           <div className="items-grid">
-            {filteredItems.map((item) => (
-              <ItemCard key={item.id} item={item} addToCart={addToCart} />
+            {filteredOffers.map((offerItem, index) => (
+              <ItemCard 
+                key={`${offerItem.id}-${offerItem.seller}-${index}`} 
+                item={offerItem} 
+                addToCart={addToCart} 
+              />
             ))}
           </div>
         ) : (
