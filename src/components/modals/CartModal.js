@@ -1,3 +1,4 @@
+//https://github.com/xJleSx
 import React from 'react';
 import Modal from 'react-modal';
 import './CartModal.css';
@@ -8,13 +9,14 @@ const CartModal = ({
   cart, 
   removeFromCart, 
   getTotalPrice,
-  clearCart // Добавьте эту строку
+  clearCart,
+  isOtherModalOpen
 }) => {
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      className="cart-modal"
+      className={`cart-modal ${isOtherModalOpen ? 'cart-modal--dimmed' : ''}`}
       overlayClassName="cart-modal-overlay"
       shouldCloseOnOverlayClick={true}
     >
