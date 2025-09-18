@@ -1,6 +1,7 @@
+//https://github.com/xJleSx
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import { Route, Routes, useNavigate, Navigate } from 'react-router-dom';
+import { Route, Routes, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import Modal from 'react-modal';
 import Header from './components/Header/Header';
 import HomePage from './pages/HomePage';
@@ -15,7 +16,6 @@ import goldencrucibleofrile from './assets/Golden Crucible of Rile.svg';
 import headoftheodobenusone from './assets/Head of the Odobenus One.svg';
 import { secureStorage } from './components/utils/secureStorage';
 
-
 Modal.setAppElement('#root');
 
 function App() {
@@ -24,7 +24,9 @@ function App() {
   const [modalIsOpen, setModalIsOpen] = useState({ type: null });
   const [cartModalIsOpen, setCartModalIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [recentlySold] = useState([
     { id: 1, name: "Exalted Feast of Abscession - Back", price: 39.72, image: exaltedFeast },
@@ -37,6 +39,11 @@ function App() {
     totalReviews: "1",
     averageRating: "4.8"
   });
+
+  // Закрываем корзину при изменении маршрута
+  useEffect(() => {
+    setCartModalIsOpen(false);
+  }, [location]);
 
   // Функция для обновления токенов
   const refreshTokenIfNeeded = () => {
@@ -56,16 +63,11 @@ function App() {
 
   // Проверка авторизации
   useEffect(() => {
-    // Добавление мета-тегов
+    // Добавление только viewport мета-тега (без CSP)
     const viewportMeta = document.createElement('meta');
     viewportMeta.name = 'viewport';
     viewportMeta.content = 'width=device-width, initial-scale=1.0';
     document.head.appendChild(viewportMeta);
-
-    const cspMeta = document.createElement('meta');
-    cspMeta.setAttribute('http-equiv', 'Content-Security-Policy');
-    cspMeta.setAttribute('content', "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data:;");
-    document.head.appendChild(cspMeta);
 
     // Проверка авторизации
     const checkAuthStatus = () => {
@@ -78,18 +80,22 @@ function App() {
       if (token && loginTime && !isNaN(parseInt(loginTime)) && (currentTime - parseInt(loginTime)) < 24 * 60 * 60 * 1000) {
         setIsLoggedIn(true);
       } else {
-        secureStorage.removeItem('authToken');
-        secureStorage.removeItem('loginTime');
-        secureStorage.removeItem('login_username');
-        secureStorage.removeItem('login_remember');
+        // Полная очистка всех данных авторизации
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('auth') || key.includes('login') || key.includes('token') || key.includes('user')) {
+            secureStorage.removeItem(key);
+          }
+        });
         setIsLoggedIn(false);
+        setIsFiltersOpen(false); // Закрываем фильтры при выходе
+        setCartModalIsOpen(false); // Закрываем корзину при выходе
         console.log('Auth cleared: invalid or expired token'); // Отладка
       }
     };
 
     checkAuthStatus();
     refreshTokenIfNeeded();
-  }, []);
+  }, [isLoggedIn]);
 
   const handleLogin = (token) => {
     console.log('handleLogin: token=', token); // Отладка
@@ -101,10 +107,14 @@ function App() {
   const handleLogout = () => {
     console.log('handleLogout called'); // Отладка
     setIsLoggedIn(false);
-    secureStorage.removeItem('authToken');
-    secureStorage.removeItem('loginTime');
-    secureStorage.removeItem('login_username');
-    secureStorage.removeItem('login_remember');
+    setIsFiltersOpen(false); // Закрываем фильтры при выходе
+    setCartModalIsOpen(false); // Закрываем корзину при выходе
+    // Полная очистка всех данных авторизации
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('auth') || key.includes('login') || key.includes('token') || key.includes('user')) {
+        secureStorage.removeItem(key);
+      }
+    });
     navigate('/');
   };
 
@@ -120,26 +130,26 @@ function App() {
     setCart((prevCart) => [...prevCart, item]);
   };
 
-const removeFromCart = (itemId, removeAll = false) => {
-  if (removeAll) {
-    // Удалить все элементы с этим ID
-    setCart((prevCart) => prevCart.filter((item) => item.id !== itemId));
-  } else {
-    // Удалить только один элемент (первый найденный)
-    setCart((prevCart) => {
-      const index = prevCart.findIndex((item) => item.id === itemId);
-      if (index === -1) return prevCart;
-      
-      const newCart = [...prevCart];
-      newCart.splice(index, 1);
-      return newCart;
-    });
-  }
-};
+  const removeFromCart = (itemId, removeAll = false) => {
+    if (removeAll) {
+      // Удалить все элементы с этим ID
+      setCart((prevCart) => prevCart.filter((item) => item.id !== itemId));
+    } else {
+      // Удалить только один элемент (первый найденный)
+      setCart((prevCart) => {
+        const index = prevCart.findIndex((item) => item.id === itemId);
+        if (index === -1) return prevCart;
+        
+        const newCart = [...prevCart];
+        newCart.splice(index, 1);
+        return newCart;
+      });
+    }
+  };
 
-const clearCart = () => {
-  setCart([]);
-};
+  const clearCart = () => {
+    setCart([]);
+  };
 
   const getTotalPrice = () => {
     return cart.reduce((total, item) => total + item.price, 0).toFixed(2);
@@ -181,7 +191,9 @@ const clearCart = () => {
           isLoggedIn ? (
             <ShopPage 
               items={items} 
-              addToCart={addToCart} 
+              addToCart={addToCart}
+              isFiltersOpen={isFiltersOpen}
+              setIsFiltersOpen={setIsFiltersOpen}
             />
           ) : (
             <div style={{ padding: '50px', textAlign: 'center', color: 'white' }}>
@@ -262,7 +274,8 @@ const clearCart = () => {
         cart={cart}
         removeFromCart={removeFromCart}
         getTotalPrice={getTotalPrice}
-        clearCart={clearCart} // Добавьте эту строку
+        clearCart={clearCart}
+        isOtherModalOpen={modalIsOpen.type !== null}
       />
     </div>
   );
