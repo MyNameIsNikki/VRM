@@ -1,3 +1,4 @@
+//https://github.com/xJleSx
 import React from 'react';
 import Modal from 'react-modal';
 import './TradeRulesModal.css';

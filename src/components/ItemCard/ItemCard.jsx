@@ -1,9 +1,11 @@
 //https://github.com/xJleSx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './/ItemCard.css';
+import './ItemCard.css';
 
-const ItemCard = ({ item, addToCart }) => {
+const ItemCard = ({ item, addToCart, cart }) => {
+  const itemCount = cart.filter(cartItem => cartItem.id === item.id).length;
+
   return (
     <div className="item-card">
       <Link to={`/item/${item.id}`} className="item-link">
@@ -24,9 +26,21 @@ const ItemCard = ({ item, addToCart }) => {
           <i className="fas fa-cubes"></i>
           {item.stock} шт
         </div>
-        <button className="buy-button" onClick={() => addToCart(item)}>
-          <i className="fas fa-shopping-cart"></i>
-          Добавить в корзину
+        <button 
+          className={`buy-button ${itemCount > 0 ? 'in-cart' : ''}`} 
+          onClick={() => addToCart(item)}
+        >
+          {itemCount > 0 ? (
+            <>
+              <i className="fas fa-check"></i>
+              В корзине: {itemCount}
+            </>
+          ) : (
+            <>
+              <i className="fas fa-shopping-cart"></i>
+              Добавить в корзину
+            </>
+          )}
         </button>
       </div>
     </div>

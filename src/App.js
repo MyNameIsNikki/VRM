@@ -185,6 +185,7 @@ function App() {
             recentlySold={recentlySold}
             statsData={statsData}
             isLoggedIn={isLoggedIn}
+            cart={cart}
           />
         } />
         <Route path="/shop" element={
@@ -194,6 +195,7 @@ function App() {
               addToCart={addToCart}
               isFiltersOpen={isFiltersOpen}
               setIsFiltersOpen={setIsFiltersOpen}
+              cart={cart}
             />
           ) : (
             <div style={{ padding: '50px', textAlign: 'center', color: 'white' }}>
@@ -221,6 +223,7 @@ function App() {
             <ItemDetailPage 
               items={items} 
               addToCart={addToCart} 
+              cart={cart}
             />
           ) : (
             <div style={{ padding: '50px', textAlign: 'center', color: 'white' }}>

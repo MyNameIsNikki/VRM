@@ -4,7 +4,6 @@ const dotenv = require('dotenv');
 const morgan = require('morgan'); 
 const winston = require('winston'); 
 
-// Импортируем пул
 const pool = require('./db');
 
 const logger = winston.createLogger({
@@ -28,6 +27,28 @@ const purchaseHistoryRoutes = require('./routes/purchaseHistory');
 dotenv.config();
 
 const app = express();
+
+// Улучшенная обработка CORS
+app.use(cors({
+  origin: function(origin, callback) {
+    // Разрешаем запросы без origin (например, из мобильных приложений или Postman)
+    if (!origin) return callback(null, true);
+    
+    // Разрешаем запросы с localhost на любом порту
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      return callback(null, true);
+    }
+    
+    // Можно добавить другие домены для продакшена
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
+
+// Обработка preflight запросов
+app.options('*', cors());
 
 app.use((req, res, next) => {
   console.log('Incoming request:', {
@@ -55,13 +76,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true,
-  optionsSuccessStatus: 200
-}));
-
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.use(morgan('combined', {
   stream: {
@@ -69,7 +85,6 @@ app.use(morgan('combined', {
   }
 }));
 
-// Используем импортированный пул
 app.locals.pool = pool;
 
 const logRoute = (routeName) => (req, res, next) => {
@@ -91,7 +106,6 @@ app.use('/api/purchase-history', logRoute('purchase-history'), purchaseHistoryRo
 app.get('/health', async (req, res) => {
   logger.info('Health check requested');
   try {
-    // Проверяем подключение к БД
     await pool.query('SELECT NOW()');
     res.json({
       status: 'ok',
@@ -116,6 +130,15 @@ app.get('/', (req, res) => {
     message: 'Dota Marketplace Server is running!',
     version: '1.0.0',
     environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+// Middleware для обработки 404
+app.use((req, res, next) => {
+  res.status(404).json({
+    error: 'Not Found',
+    message: `Route ${req.method} ${req.url} not found`,
+    timestamp: new Date().toISOString()
   });
 });
 
@@ -160,7 +183,6 @@ process.on('unhandledRejection', (reason, promise) => {
   });
 });
 
-// Graceful shutdown
 process.on('SIGINT', async () => {
   logger.info('Received SIGINT. Shutting down gracefully...');
   await pool.end();

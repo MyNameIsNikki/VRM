@@ -1,0 +1,26 @@
+{"level":"info","message":"Попытка входа пользователя","timestamp":"2025-09-12T19:21:03.513Z","username":"Mouse"}
+{"level":"info","message":"Пользователь успешно вошел","timestamp":"2025-09-12T19:21:03.675Z","userId":3,"username":"Mouse"}
+{"level":"info","message":"Попытка входа пользователя","timestamp":"2025-09-18T10:04:08.087Z","username":"Mouse"}
+{"level":"warn","message":"Пользователь не найден","timestamp":"2025-09-18T10:04:08.092Z","username":"Mouse"}
+{"level":"info","message":"Попытка входа пользователя","timestamp":"2025-09-18T10:04:10.733Z","username":"Mouse"}
+{"level":"warn","message":"Пользователь не найден","timestamp":"2025-09-18T10:04:10.735Z","username":"Mouse"}
+{"level":"info","message":"Попытка входа пользователя","timestamp":"2025-09-18T10:04:16.314Z","username":"Mouse"}
+{"level":"warn","message":"Пользователь не найден","timestamp":"2025-09-18T10:04:16.317Z","username":"Mouse"}
+{"level":"info","message":"Попытка входа пользователя","timestamp":"2025-09-18T10:04:22.536Z","username":"user"}
+{"level":"warn","message":"Пользователь не найден","timestamp":"2025-09-18T10:04:22.537Z","username":"user"}
+{"level":"info","message":"Попытка входа пользователя","timestamp":"2025-09-18T10:11:50.831Z","username":"user5"}
+{"level":"info","message":"Пользователь успешно вошел","timestamp":"2025-09-18T10:11:50.985Z","userId":4,"username":"user5"}
+{"level":"info","message":"Попытка входа пользователя","timestamp":"2025-09-18T12:05:06.053Z","username":"Artem"}
+{"level":"info","message":"Пользователь успешно вошел","timestamp":"2025-09-18T12:05:06.143Z","userId":5,"username":"Artem"}
+{"level":"info","message":"Попытка входа пользователя","timestamp":"2025-09-18T12:05:51.566Z","username":"Artem"}
+{"level":"info","message":"Пользователь успешно вошел","timestamp":"2025-09-18T12:05:51.720Z","userId":5,"username":"Artem"}
+{"level":"info","message":"Попытка входа пользователя","timestamp":"2025-09-19T12:21:41.657Z","username":"Mouse"}
+{"level":"warn","message":"Пользователь не найден","timestamp":"2025-09-19T12:21:41.889Z","username":"Mouse"}
+{"level":"info","message":"Попытка входа пользователя","timestamp":"2025-09-19T12:21:46.058Z","username":"Mouse"}
+{"level":"warn","message":"Пользователь не найден","timestamp":"2025-09-19T12:21:46.060Z","username":"Mouse"}
+{"level":"info","message":"Попытка входа пользователя","timestamp":"2025-09-19T12:21:54.381Z","username":"Artem"}
+{"level":"warn","message":"Неверный пароль","timestamp":"2025-09-19T12:21:54.470Z","username":"Artem"}
+{"level":"info","message":"Попытка входа пользователя","timestamp":"2025-09-19T12:21:56.946Z","username":"Artem"}
+{"level":"info","message":"Пользователь успешно вошел","timestamp":"2025-09-19T12:21:57.041Z","userId":5,"username":"Artem"}
+{"level":"info","message":"Попытка входа пользователя","timestamp":"2025-09-22T22:02:06.133Z","username":"Artem"}
+{"level":"info","message":"Пользователь успешно вошел","timestamp":"2025-09-22T22:02:06.317Z","userId":5,"username":"Artem"}

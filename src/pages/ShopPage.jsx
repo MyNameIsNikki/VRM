@@ -5,7 +5,7 @@ import PriceFilter from '../components/filters/PriceFilter';
 import CategoryFilter from '../components/filters/CategoryFilter';
 import './ShopPage.css';
 
-const ShopPage = ({ items, addToCart, isFiltersOpen, setIsFiltersOpen }) => {
+const ShopPage = ({ items, addToCart, isFiltersOpen, setIsFiltersOpen, cart }) => {
   const [filtersActive, setFiltersActive] = useState(isFiltersOpen);
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
   const [selectedTypes, setSelectedTypes] = useState([]);
@@ -235,6 +235,7 @@ const ShopPage = ({ items, addToCart, isFiltersOpen, setIsFiltersOpen }) => {
                 key={`${offerItem.id}-${offerItem.seller}-${index}`} 
                 item={offerItem} 
                 addToCart={addToCart} 
+                cart={cart}
               />
             ))}
           </div>

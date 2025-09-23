@@ -1,3 +1,4 @@
+//https://github.com/xJleSx
 // Безопасное хранилище для чувствительных данных
 export const secureStorage = {
   setItem: (key, value) => {

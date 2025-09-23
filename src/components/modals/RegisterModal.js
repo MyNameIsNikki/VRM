@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+//https://github.com/xJleSx
+import React, { useState } from 'react';
 import './RegisterModal.css';
 import SecurityPolicyModal from './SecurityPolicyModal'; 
-import { hashPassword, isValidEmail, isStrongPassword, sanitizeInput } from '../utils/security';
+import { isValidEmail, isStrongPassword, sanitizeInput } from '../utils/security';
+import { authService } from '../../services/authService';
 
 const RegisterModal = ({ isOpen, onClose, onRegisterSuccess, onSwitchToLogin }) => {
   const [formData, setFormData] = useState({
@@ -14,17 +16,6 @@ const RegisterModal = ({ isOpen, onClose, onRegisterSuccess, onSwitchToLogin }) 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
-
-  useEffect(() => {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, [isOpen, onClose]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -87,39 +78,62 @@ const RegisterModal = ({ isOpen, onClose, onRegisterSuccess, onSwitchToLogin }) 
     }
     
     setIsLoading(true);
+    setErrors({});
     
     try {
-      // Эмуляция запроса на сервер
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // В реальном приложении здесь мы бы отправили хешированный пароль на сервер
-      const hashedPassword = await hashPassword(formData.password);
-      
-      console.log('Регистрация:', {
-        username: sanitizeInput(formData.username.trim()),
-        email: sanitizeInput(formData.email.trim()),
-        password: hashedPassword // Отправляем хеш вместо plain text
+      const sanitizedUsername = sanitizeInput(formData.username.trim());
+      const sanitizedEmail = sanitizeInput(formData.email.trim());
+
+      // Используем authService вместо прямого fetch
+      const response = await authService.register({
+        username: sanitizedUsername,
+        email: sanitizedEmail,
+        password: formData.password
       });
+
+      // authService уже обработал JSON парсинг
+      if (response.data && response.data.token) {
+        if (onRegisterSuccess) {
+          onRegisterSuccess(response.data.token, response.data.user);
+        }
+        onClose();
+      } else {
+        throw new Error('Неверный ответ от сервера');
+      }
+    } catch (err) {
+      console.error('Registration error:', err);
       
-      // Генерируем простой токен (в реальном приложении это должен быть JWT от сервера)
-      const token = 'demo-auth-token-' + Math.random().toString(36).substr(2);
+      let errorMessage = 'Ошибка регистрации';
       
-      if (onRegisterSuccess) {
-        onRegisterSuccess(token);
+      if (err.response) {
+        // Сервер вернул ошибку
+        const serverError = err.response.data;
+        if (serverError.error) {
+          errorMessage = serverError.error;
+        } else if (serverError.errors && serverError.errors.length > 0) {
+          errorMessage = serverError.errors[0].msg || serverError.errors[0].message;
+        } else if (serverError.message) {
+          errorMessage = serverError.message;
+        }
+      } else if (err.request) {
+        // Запрос был сделан, но ответ не получен
+        errorMessage = 'Не удалось подключиться к серверу';
+      } else {
+        // Другая ошибка
+        errorMessage = err.message || 'Неизвестная ошибка';
       }
       
-      onClose();
-    } catch (err) {
-      setErrors({ submit: 'Произошла ошибка при регистрации. Попробуйте снова.' });
+      setErrors({ submit: errorMessage });
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
+    // Убрана функциональность закрытия при клике вне модального окна
+    // if (e.target === e.currentTarget) {
+    //   onClose();
+    // }
   };
 
   const handleLoginClick = (e) => {
@@ -160,72 +174,70 @@ const RegisterModal = ({ isOpen, onClose, onRegisterSuccess, onSwitchToLogin }) 
 
         <h1 className="title">Создать аккаунт</h1>
 
-      <form onSubmit={handleSubmit}>
-        {/* Добавляем поле для имени пользователя */}
-        <div className="field">
-          <label htmlFor="username">Имя пользователя <span>*</span></label>
-          <input
-            id="username"
-            name="username"
-            type="text"
-            placeholder="Введите имя пользователя"
-            value={formData.username}
-            onChange={handleInputChange}
-            autoComplete="username"
-            disabled={isLoading}
-          />
-          {errors.username && <div className="error">{errors.username}</div>}
-          <div className="hint"></div>
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="field">
+            <label htmlFor="username">Имя пользователя <span>*</span></label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              placeholder="Введите имя пользователя"
+              value={formData.username}
+              onChange={handleInputChange}
+              autoComplete="username"
+              disabled={isLoading}
+            />
+            {errors.username && <div className="error">{errors.username}</div>}
+            <div className="hint"></div>
+          </div>
 
-<div className="field">
-          <label htmlFor="email">Email <span>*</span></label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="Введите ваш email"
-            value={formData.email}
-            onChange={handleInputChange}
-            autoComplete="email"
-            disabled={isLoading}
-          />
-          {errors.email && <div className="error">{errors.email}</div>}
-          <div className="hint"></div>
-        </div>
+          <div className="field">
+            <label htmlFor="email">Email <span>*</span></label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Введите ваш email"
+              value={formData.email}
+              onChange={handleInputChange}
+              autoComplete="email"
+              disabled={isLoading}
+            />
+            {errors.email && <div className="error">{errors.email}</div>}
+            <div className="hint"></div>
+          </div>
 
-        <div className="field">
-          <label htmlFor="password">Пароль <span>*</span></label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="Придумайте надежный пароль"
-            value={formData.password}
-            onChange={handleInputChange}
-            autoComplete="new-password"
-            disabled={isLoading}
-          />
-          {errors.password && <div className="error">{errors.password}</div>}
-          <div className="hint">Пароль должен содержать не менее 8 символов, включая цифры и буквы</div>
-        </div>
+          <div className="field">
+            <label htmlFor="password">Пароль <span>*</span></label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Придумайте надежный пароль"
+              value={formData.password}
+              onChange={handleInputChange}
+              autoComplete="new-password"
+              disabled={isLoading}
+            />
+            {errors.password && <div className="error">{errors.password}</div>}
+            <div className="hint">Пароль должен содержать не менее 8 символов, включая цифры и буквы</div>
+          </div>
 
-        {/* Исправляем поле подтверждения пароля */}
-        <div className="field">
-          <label htmlFor="confirm-password">Подтверждение пароля <span>*</span></label>
-          <input
-            id="confirm-password"
-            name="confirmPassword"
-            type="password"
-            placeholder="Повторите ваш пароль"
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
-            autoComplete="new-password"
-            disabled={isLoading}
-          />
-          {errors.confirmPassword && <div className="error">{errors.confirmPassword}</div>}
-          <div className="hint"></div>
-        </div>
+          <div className="field">
+            <label htmlFor="confirm-password">Подтверждение пароля <span>*</span></label>
+            <input
+              id="confirm-password"
+              name="confirmPassword"
+              type="password"
+              placeholder="Повторите ваш пароль"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              autoComplete="new-password"
+              disabled={isLoading}
+            />
+            {errors.confirmPassword && <div className="error">{errors.confirmPassword}</div>}
+            <div className="hint"></div>
+          </div>
 
           <div className="checkbox">
             <input
@@ -237,7 +249,7 @@ const RegisterModal = ({ isOpen, onClose, onRegisterSuccess, onSwitchToLogin }) 
             />
             <label htmlFor="terms">
               Я принимаю условия использования и согласен с{' '}
-              <a href="#" className="link" onClick={handleSecurityPolicyClick}>
+              <a href="./TermsModal.js" className="link" onClick={handleSecurityPolicyClick}>
                 политикой конфиденциальности
               </a>
             </label>
@@ -263,7 +275,6 @@ const RegisterModal = ({ isOpen, onClose, onRegisterSuccess, onSwitchToLogin }) 
         </div>
       </div>
 
-      {/* Добавляем модальное окно политики безопасности */}
       <SecurityPolicyModal 
         isOpen={isSecurityModalOpen}
         onRequestClose={() => setIsSecurityModalOpen(false)}
@@ -272,4 +283,4 @@ const RegisterModal = ({ isOpen, onClose, onRegisterSuccess, onSwitchToLogin }) 
   );
 };
 
-export default RegisterModal; 
+export default RegisterModal;

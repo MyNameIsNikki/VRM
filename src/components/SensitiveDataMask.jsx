@@ -1,3 +1,4 @@
+//https://github.com/xJleSx
 import React from 'react';
 
 const SensitiveDataMask = ({ data, visible = false, maskChar = '•', revealLength = 0 }) => {

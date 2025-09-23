@@ -2,7 +2,6 @@ require('dotenv').config();
 const { Pool } = require('pg');
 const winston = require('winston');
 
-// Проверка переменных окружения
 console.log('Database configuration:', {
   DB_USER: process.env.DB_USER,
   DB_HOST: process.env.DB_HOST,
@@ -23,7 +22,6 @@ const logger = winston.createLogger({
   ]
 });
 
-// Создаем глобальный пул соединений
 const pool = new Pool({
   user: process.env.DB_USER || 'postgres',
   host: process.env.DB_HOST || 'localhost',
@@ -54,7 +52,6 @@ pool.on('error', (err, client) => {
   });
 });
 
-// Тестируем подключение при инициализации
 pool.query('SELECT NOW()')
   .then((res) => {
     logger.info('Database connection test successful', {

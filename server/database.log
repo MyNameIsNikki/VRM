@@ -1,0 +1,88 @@
+{"error":"������������ \"postgres\" �� ������ �������� ����������� (�� ������)","level":"error","message":"Database connection test failed","stack":"error: ������������ \"postgres\" �� ������ �������� ����������� (�� ������)\n    at C:\\Users\\Asker\\Downloads\\VRM-main\\VRM-main\\server\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","timestamp":"2025-09-03T19:06:50.185Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-03T19:09:08.650Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-03T19:09:08.651Z"}
+{"currentTime":"2025-09-03T19:09:08.651Z","level":"info","message":"Database connection test successful","timestamp":"2025-09-03T19:09:08.654Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-03T19:09:38.669Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-03T19:20:49.126Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-03T19:20:49.127Z"}
+{"currentTime":"2025-09-03T19:20:49.128Z","level":"info","message":"Database connection test successful","timestamp":"2025-09-03T19:20:49.128Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-03T19:21:19.129Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-03T19:29:29.186Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-03T19:29:29.187Z"}
+{"currentTime":"2025-09-03T19:29:29.188Z","level":"info","message":"Database connection test successful","timestamp":"2025-09-03T19:29:29.188Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-03T19:29:59.195Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-03T19:40:28.862Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-03T19:40:28.862Z"}
+{"currentTime":"2025-09-03T19:40:28.864Z","level":"info","message":"Database connection test successful","timestamp":"2025-09-03T19:40:28.864Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-03T19:40:58.875Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-03T20:26:53.560Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-03T20:26:53.560Z"}
+{"currentTime":"2025-09-03T20:26:53.562Z","level":"info","message":"Database connection test successful","timestamp":"2025-09-03T20:26:53.562Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-03T20:27:23.567Z"}
+{"error":"������������ \"postgres\" �� ������ �������� ����������� (�� ������)","level":"error","message":"Database connection test failed","stack":"error: ������������ \"postgres\" �� ������ �������� ����������� (�� ������)\n    at C:\\Users\\user\\Desktop\\VRM-main-main\\server\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","timestamp":"2025-09-11T10:39:52.357Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-11T10:45:18.498Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-11T10:45:18.498Z"}
+{"currentTime":"2025-09-11T10:45:18.503Z","level":"info","message":"Database connection test successful","timestamp":"2025-09-11T10:45:18.539Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-11T10:45:48.550Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-12T16:14:18.593Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-12T16:14:18.594Z"}
+{"currentTime":"2025-09-12T16:14:18.598Z","level":"info","message":"Database connection test successful","timestamp":"2025-09-12T16:14:18.599Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-12T16:14:48.604Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-12T17:02:52.009Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-12T17:02:52.010Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-12T17:03:22.140Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-12T17:26:47.779Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-12T17:26:47.780Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-12T17:27:10.449Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-12T17:27:40.549Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-12T17:51:59.092Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-12T17:51:59.092Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-12T17:52:29.183Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-12T19:21:03.568Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-12T19:21:03.568Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-12T19:21:33.679Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-18T10:03:43.294Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-18T10:03:43.294Z"}
+{"currentTime":"2025-09-18T10:03:43.301Z","level":"info","message":"Database connection test successful","timestamp":"2025-09-18T10:03:43.299Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-18T10:04:08.088Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-18T10:04:10.734Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-18T10:04:16.314Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-18T10:04:22.536Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-18T10:04:52.553Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-18T10:05:02.152Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-18T10:05:02.152Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-18T10:05:32.295Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-18T10:11:50.886Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-18T10:11:50.886Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-18T10:12:20.990Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-18T12:04:27.090Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-18T12:04:27.090Z"}
+{"currentTime":"2025-09-18T12:04:27.093Z","level":"info","message":"Database connection test successful","timestamp":"2025-09-18T12:04:27.095Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-18T12:04:53.822Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-18T12:05:06.054Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-18T12:05:36.151Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-18T12:05:51.620Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-18T12:05:51.621Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-18T12:06:21.732Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-19T12:21:09.418Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-19T12:21:09.419Z"}
+{"currentTime":"2025-09-19T12:21:09.426Z","level":"info","message":"Database connection test successful","timestamp":"2025-09-19T12:21:09.458Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-19T12:21:39.461Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-19T12:21:41.848Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-19T12:21:41.849Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-19T12:21:46.059Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-19T12:21:54.381Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-19T12:21:56.946Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-19T12:22:27.050Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-20T08:15:04.729Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-20T08:15:04.730Z"}
+{"currentTime":"2025-09-20T08:15:04.732Z","level":"info","message":"Database connection test successful","timestamp":"2025-09-20T08:15:04.765Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-20T08:15:34.768Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-22T22:01:16.050Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-22T22:01:16.050Z"}
+{"currentTime":"2025-09-22T22:01:16.052Z","level":"info","message":"Database connection test successful","timestamp":"2025-09-22T22:01:16.090Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-22T22:01:46.092Z"}
+{"level":"info","message":"Database client connected","timestamp":"2025-09-22T22:02:06.190Z"}
+{"level":"info","message":"Database client acquired from pool","timestamp":"2025-09-22T22:02:06.190Z"}
+{"level":"info","message":"Database client removed from pool","timestamp":"2025-09-22T22:02:36.330Z"}
+{"error":"","level":"error","message":"Database connection test failed","stack":"AggregateError [ECONNREFUSED]: \n    at C:\\Users\\максим\\workvs\\VRM-main-main\\server\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","timestamp":"2025-09-23T11:58:26.182Z"}

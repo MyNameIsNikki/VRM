@@ -3,30 +3,37 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthModal from '../modals/AuthModal';
 import RegisterModal from '../modals/RegisterModal';
+import TestRulesModal from '../modals/TestRulesModal'; // Добавьте этот импорт
 import './Header.css';
 
 const Header = ({ openModal, setCartModalIsOpen, cart, isLoggedIn, onLogout, onLogin }) => {
   const navigate = useNavigate();
   const [activeAuthModal, setActiveAuthModal] = useState(null);
+  const [testModalIsOpen, setTestModalIsOpen] = useState(false); // Добавьте это состояние
 
-  console.log('Header: isLoggedIn=', isLoggedIn); // Отладка
+  console.log('Header: isLoggedIn=', isLoggedIn);
 
   const handleLoginSuccess = (token) => {
-    console.log('Header: handleLoginSuccess, token=', token); // Отладка
+    console.log('Header: handleLoginSuccess, token=', token);
     setActiveAuthModal(null);
     onLogin(token);
   };
 
   const handleRegisterSuccess = (token) => {
-    console.log('Header: handleRegisterSuccess, token=', token); // Отладка
+    console.log('Header: handleRegisterSuccess, token=', token);
     setActiveAuthModal(null);
     onLogin(token);
   };
 
   const handleLogoutClick = () => {
-    console.log('Header: handleLogoutClick called'); // Отладка
+    console.log('Header: handleLogoutClick called');
     onLogout();
     navigate('/');
+  };
+
+  const handleSellClick = () => {
+    // Вместо открытия модального окна продажи открываем тест
+    setTestModalIsOpen(true);
   };
 
   return (
@@ -39,7 +46,7 @@ const Header = ({ openModal, setCartModalIsOpen, cart, isLoggedIn, onLogout, onL
           <div className="nav-links">
             {isLoggedIn ? (
               <>
-                <button className="nav-link-button" onClick={() => openModal('sell')}>
+                <button className="nav-link-button" onClick={handleSellClick}> {/* Обновите этот обработчик */}
                   <i className="fas fa-coins"></i> Продать скины
                 </button>
                 <button className="nav-link-button" onClick={() => navigate('/shop')}>
@@ -82,6 +89,11 @@ const Header = ({ openModal, setCartModalIsOpen, cart, isLoggedIn, onLogout, onL
         onClose={() => setActiveAuthModal(null)}
         onRegisterSuccess={handleRegisterSuccess}
         onSwitchToLogin={() => setActiveAuthModal('login')}
+      />
+
+      <TestRulesModal 
+        isOpen={testModalIsOpen}
+        onRequestClose={() => setTestModalIsOpen(false)}
       />
     </>
   );
