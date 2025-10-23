@@ -12,6 +12,12 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, onSwitchToRegister }) => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Тестовый пользователь
+  const DEMO_USER = {
+    email: 'abvgd@mail.ru',
+    password: 'Password_123'
+  };
+
   useEffect(() => {
     const savedUsername = localStorage.getItem('login_username');
     const savedRemember = localStorage.getItem('login_remember');
@@ -37,7 +43,29 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, onSwitchToRegister }) => {
     }
 
     try {
-      // Используем POST-запрос вместо GET
+      // Проверка на тестового пользователя
+      if (sanitizedUsername === DEMO_USER.email && sanitizedPassword === DEMO_USER.password) {
+        // Имитация успешного входа для тестового пользователя
+        const demoToken = 'demo_jwt_token_' + Date.now();
+        
+        if (rememberMe) {
+          localStorage.setItem('login_username', sanitizedUsername);
+          localStorage.setItem('login_remember', 'true');
+        } else {
+          localStorage.removeItem('login_username');
+          localStorage.setItem('login_remember', 'false');
+        }
+        
+        if (onLoginSuccess) {
+          onLoginSuccess(demoToken);
+        }
+        
+        onClose();
+        setIsLoading(false);
+        return;
+      }
+
+      // Стандартная авторизация для других пользователей
       const response = await authService.login({
         username: sanitizedUsername,
         password: sanitizedPassword
@@ -121,7 +149,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, onSwitchToRegister }) => {
           <label className="field">
             <input
               type="text"
-              placeholder="Имя пользователя"
+              placeholder="Имя пользователя или email"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
